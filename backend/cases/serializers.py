@@ -96,7 +96,7 @@ class CaseDetailSerializer(CaseListSerializer):
 
 class CaseCreateSerializer(serializers.Serializer):
     child_id = serializers.PrimaryKeyRelatedField(queryset=Child.objects.all(), source="child", required=False, allow_null=True)
-    child_pseudonym = serializers.CharField(max_length=60, required=False)
+    child_pseudonym = serializers.CharField(max_length=60, required=False, allow_blank=True)
     age_range = serializers.ChoiceField(choices=AgeRange.choices, required=False)
     preferred_language = serializers.ChoiceField(choices=Language.choices, default="en")
     date_reported = serializers.DateField()

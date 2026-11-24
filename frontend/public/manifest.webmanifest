@@ -1,0 +1,10 @@
+{
+  "name": "Tuliwamu",
+  "short_name": "Tuliwamu",
+  "description": "Child-sensitive justice referral and case coordination (prototype)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F6F5F0",
+  "theme_color": "#172B3A",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

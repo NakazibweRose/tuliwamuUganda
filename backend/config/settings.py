@@ -218,3 +218,10 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": "INFO"},
     "loggers": {"django.request": {"handlers": ["console"], "level": "WARNING", "propagate": False}},
 }
+
+# Faster hashing for the automated test suite only.
+import sys  # noqa: E402
+
+if "test" in sys.argv:
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+    SECURE_SSL_REDIRECT = False

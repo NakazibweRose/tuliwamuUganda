@@ -101,7 +101,7 @@ def create_referral(user, case, data, request=None):
     )
     record(user, "referral.create", referral, request=request, case_id=str(case.id), category=category, shared_fields=fields)
     if data.get("send_now", True):
-        transition(user, referral, "send", request=request)
+        referral = transition(user, referral, "send", request=request)
     return referral
 
 
