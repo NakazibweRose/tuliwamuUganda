@@ -532,7 +532,7 @@
  },
  "anon": {
   "title": "Anonymous reports",
-  "subtitle": "Concerns received through USSD. They stay separate from official cases until an officer assesses them.",
+  "subtitle": "Concerns received anonymously through USSD. Only police officers can see them; they stay separate from official cases until assessed.",
   "unverifiedTitle": "Unverified reports",
   "unverifiedBody": "An anonymous report is not a proven allegation. Assess it, record the outcome and only open an official case where justified.",
   "empty": "No reports.",
@@ -616,8 +616,9 @@
   "try2": "Choose 1 to report a concern and answer the short questions.",
   "try3": "Note the reference and PIN shown at the end.",
   "try4": "Dial again, choose 2 and enter the reference and PIN to check status.",
-  "try5": "Police and probation officers can then review it under Anonymous reports.",
-  "history": "Text sent to the gateway"
+  "try5": "Police officers then review it under Anonymous reports.",
+  "history": "Text sent to the gateway",
+  "anonymousNote": "Reports made by USSD are anonymous: they are not linked to your account and you will not see them on your home page. Keep the reference and PIN to check the status by USSD."
  },
  "sms": {
   "title": "SMS delivery",
@@ -848,7 +849,8 @@
    "help": "Get help",
    "support": "Support",
    "messages": "Messages",
-   "settings": "Safety"
+   "settings": "Safety",
+   "ussd": "USSD"
   },
   "hello": "Hello {name}",
   "intro": "Here you can follow the progress of your case in simple words. Only information checked by your support officer is shown.",
@@ -1151,5 +1153,9 @@
   "declineMessage": "Message to the complainant",
   "declineSubmit": "Close without registering",
   "history": "History"
+ },
+ "ussdCard": {
+  "title": "No smartphone? Report from any phone",
+  "body": "Dial the Tuliwamu USSD code to report anonymously. Try how it works with the simulator."
  }
 }

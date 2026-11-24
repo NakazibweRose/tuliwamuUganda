@@ -2,14 +2,13 @@
 
 * Renames the old `child.demo` account to `complainant.demo` with the Complainant role and removes its
   case access, so it starts on the welcome page.
-* Adds `complainant.two` and one written report waiting in the police queue, if missing.
+* Adds the `complainant.two` account if missing (no data).
 """
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from accounts.models import User
 from cases.models import BeneficiaryAccessGrant
-from complaints.models import Complaint
 from institutions.models import Institution
 
 
@@ -35,6 +34,4 @@ class Command(BaseCommand):
             if User.objects.filter(username="complainant.demo").exists() is False:
                 seed._user("complainant.demo", "Demo Complainant", "COMPLAINANT")
             seed.inst = {"kla_police": Institution.objects.filter(type="POLICE", is_demo=True).order_by("created_at").first()}
-            if not Complaint.objects.exists():
-                seed.complaints()
             self.stdout.write(f"Added complainant.two (password {DEMO_PASSWORD})")

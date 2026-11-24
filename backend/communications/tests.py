@@ -126,7 +126,9 @@ class UssdFlowTests(World):
         self.assertEqual(ok.status_code, 200)
 
     def test_simulator_uses_same_engine(self):
-        c = self.client_for(self.police)
+        self.assertEqual(self.client_for(self.police).post("/api/communications/ussd/simulator/", {"sessionId": str(uuid.uuid4()), "text": ""}, format="json").status_code, 403)
+        self.assertEqual(self.client_for(self.caregiver).post("/api/communications/ussd/simulator/", {"sessionId": str(uuid.uuid4()), "text": ""}, format="json").status_code, 403)
+        c = self.client_for(self.user("complainant", "COMPLAINANT"))
         sid = str(uuid.uuid4())
         first = c.post("/api/communications/ussd/simulator/", {"sessionId": sid, "text": ""}, format="json")
         self.assertTrue(first.data["response"].startswith("CON WELCOME TO TULIWAMU"))
@@ -152,8 +154,8 @@ class AnonymousReportTriageTests(World):
 
     def test_only_triage_roles_can_view(self):
         self.assertEqual(self.client_for(self.police).get("/api/anonymous-reports/").status_code, 200)
-        self.assertEqual(self.client_for(self.probation_officer).get(f"/api/anonymous-reports/{self.report.id}/").status_code, 200)
-        for u in (self.medic, self.prosecutor, self.admin, self.caregiver):
+        self.assertEqual(self.client_for(self.police2).get(f"/api/anonymous-reports/{self.report.id}/").status_code, 200)
+        for u in (self.probation_officer, self.medic, self.prosecutor, self.clerk, self.admin, self.caregiver):
             self.assertEqual(self.client_for(u).get("/api/anonymous-reports/").status_code, 403)
 
     def test_report_is_not_auto_converted_and_conversion_needs_assessment(self):

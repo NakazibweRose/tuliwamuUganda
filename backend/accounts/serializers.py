@@ -37,6 +37,7 @@ class MeSerializer(serializers.ModelSerializer):
             "schedule_hearing": institutional and obj.role == Role.COURT,
             "triage_anonymous_reports": institutional and obj.role in ANONYMOUS_REPORT_TRIAGE_ROLES,
             "verify_complaints": institutional and obj.role == Role.POLICE,
+            "ussd_simulator": obj.role == Role.COMPLAINANT,
             "view_analytics": obj.role == Role.ADMIN or (institutional and obj.is_supervisor),
             "manage_users": obj.role == Role.ADMIN,
             "view_audit": obj.role == Role.ADMIN,

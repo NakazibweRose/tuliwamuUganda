@@ -142,7 +142,8 @@
    "help": "Nong kony",
    "support": "Kony",
    "messages": "Kwena",
-   "settings": "Gwoko kuc"
+   "settings": "Gwoko kuc",
+   "ussd": "USSD"
   },
   "hello": "Moi {name}",
   "intro": "Kany itwero lubu kit ma lok megi tye ka wot kwede i leb ma yot. Ngec ma latic ma konyi otyeko ngiyo keken aye kinyutu.",

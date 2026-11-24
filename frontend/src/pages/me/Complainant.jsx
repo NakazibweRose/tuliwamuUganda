@@ -103,7 +103,21 @@ function Welcome({ name }) {
         </Card>
         <Alert tone="danger" title={t('ben.emergencyTitle')}>{t('ben.emergency')}</Alert>
       </div>
+      <UssdCard />
     </div>
+  )
+}
+
+function UssdCard() {
+  const { t } = useI18n()
+  const { user } = useAuth()
+  if (!user.permissions?.ussd_simulator) return null
+  return (
+    <Link to="/me/ussd" className="flex items-center gap-4 rounded-2xl border border-line bg-white p-4 shadow-card hover:border-teal">
+      <span className="rounded-xl bg-bronze-50 p-3 text-bronze"><Icon name="phoneSim" /></span>
+      <span className="flex-1"><span className="block font-semibold text-navy">{t('ussdCard.title')}</span><span className="block text-sm text-muted">{t('ussdCard.body')}</span></span>
+      <Icon name="arrowRight" className="h-5 w-5 text-teal" />
+    </Link>
   )
 }
 
@@ -297,6 +311,7 @@ export function ReportWizard() {
     <div className="mx-auto max-w-2xl">
       <h1 className="font-serif text-2xl font-semibold text-navy">{t('report.title')}</h1>
       <p className="mt-1 text-muted">{t('report.intro')}</p>
+      {step === 0 && <div className="mt-4"><UssdCard /></div>}
       <div className="mt-5 flex gap-1.5" aria-hidden="true">{stepTitles.map((_, i) => <span key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-teal' : 'bg-line'}`} />)}</div>
       <p className="mt-2 text-sm font-semibold text-teal-700">{t('report.stepOf', { n: step + 1, total: 3 })} · {stepTitles[step]}</p>
 

@@ -54,7 +54,7 @@ points to where it is enforced in code and which test checks it.
 
 ## 6. Abuse resistance
 
-* Anonymous reports are marked **unverified**, are triaged by humans, and become official cases only after an officer records the outcome "needs action".
+* Anonymous reports are visible **only to police officers** (not probation, health, ODPP, court or administrators), are marked **unverified**, are triaged by humans, and become official cases only after an officer records the outcome "needs action".
 * Per-line daily report limit, a lockout on the PIN for status checks (per report and per line), throttling on USSD and login, and an optional shared callback token for Africa's Talking webhooks.
 
 ## 7. Correction, retention & backups (to be completed before go-live)

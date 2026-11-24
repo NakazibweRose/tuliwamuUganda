@@ -27,7 +27,6 @@ function navFor(user) {
     items.push({ to: '/app/analytics', icon: 'chart', key: 'analytics' })
     items.push({ to: '/app/sms', icon: 'msg', key: 'sms' })
   }
-  items.push({ to: '/app/ussd-simulator', icon: 'phoneSim', key: 'ussd' })
   if (isAdmin) {
     items.push({ section: 'administration' })
     items.push({ to: '/app/admin/users', icon: 'users', key: 'users' })

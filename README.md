@@ -93,13 +93,13 @@ The login page also has a one-click account picker.
 | `court.registry` | Court registry clerk | Demo Family & Children Court Registry |
 | `probation.officer` | Probation & social welfare (supervisor) | Kampala Demo Probation Office |
 | `legalaid.officer`, `support.counsellor` | Legal aid / psychosocial support | Demo Legal Aid Clinic / Psychosocial Centre |
-| `caregiver.demo` | Caregiver with an **approved** grant for Demo Child A (SMS preference on, Luganda) | — |
+| `caregiver.demo` | Caregiver (SMS preference on, Luganda) — sees a case only after an officer grants access | — |
 | `complainant.demo` | **Complainant** with no reports yet — shows the welcome page and the voice/written reporting flow | — |
-| `complainant.two` | Complainant (replies in Acholi) whose written report is already waiting in the police queue | — |
-| `caregiver.other` | Caregiver with **no** grants (use to show caregivers see nothing by default) | — |
+| `complainant.two` | Second complainant (prefers Acholi) | — |
+| `caregiver.other` | Caregiver (use to show caregivers see nothing until access is granted) | — |
 | `admin` | System administrator (no case access) | — |
 
-The seed also creates 48 background cases with referrals, so analytics show realistic patterns. The judge
+**Clean start:** the demo contains only institutions, accounts and the support-services directory — no cases, referrals, reports or messages — so every journey starts from scratch. Run `python manage.py seed_demo --reset --sample-data` locally if you want busy dashboards with fictional sample cases. On the live site, changing the `DEMO_RESET_ID` environment variable on Render wipes all demo activity once and starts clean again (accounts kept). The judge
 walkthrough is in [`docs/07-demo-script-and-pitch.md`](docs/07-demo-script-and-pitch.md).
 
 ## Tests

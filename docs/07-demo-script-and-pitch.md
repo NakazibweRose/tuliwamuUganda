@@ -1,6 +1,6 @@
 # Demo script (≈8 minutes) and pitch
 
-Before the demo, reset the data: `python manage.py seed_demo --reset`. All accounts use `Tuliwamu#Demo2026`
+Before the demo, reset the data: `python manage.py seed_demo --reset` (clean start: accounts only, no cases). On the live site, change `DEMO_RESET_ID` on Render. All accounts use `Tuliwamu#Demo2026`
 and can be picked from the **Demonstration accounts** panel on the login page. Use two browser windows
 (or one normal and one private window) so you can stay signed in as two people at once.
 
@@ -44,7 +44,7 @@ sequenceDiagram
 | 10 | `caregiver.other` | Home: journey path at *Court*, latest news, hearing card, support officer. **See everything** → **Ask for help** | “Five questions answered in simple words. No investigation, medical or evidence details. Quick exit at the top.” |
 | 11 | `complainant.demo` on a phone | Welcome page → **Tell us what happened** → My child, 9–11, Kampala → Luganda → record a voice note → send. Then `police.officer` → **Reports to verify** → read the Sunbird AI summary, ask a question, register the case. Back as the complainant: answer, then follow the case | “Speak in Luganda or Acholi. Sunbird AI transcribes and summarises, but a police officer verifies everything within 24 hours.” |
 | 12 | `admin` | **Anonymised analytics** (point out *fewer than 5*) → **SMS delivery** (“Simulated”) → **Audit log** (security events) → try `/app/cases` | “Admins manage the platform but cannot read cases. Small groups are hidden so no child can be identified.” |
-| 13 | any staff | **USSD simulator**: choose 2 (Kiswahili) → 1 → report → note the reference and PIN; dial again → 2 → check status. Then `probation.officer` → **Anonymous reports** → assess → convert to case | “No name, no ID, the number is not stored. The report stays *unverified* until an officer assesses it.” |
+| 13 | `complainant.demo` | **USSD** (complainant menu): choose 2 (Kiswahili) → 1 → report → note the reference and PIN; dial again → 2 → check status. Then `police.officer` → **Anonymous reports** (police only) → assess → convert to case | “No name, no ID, the number is not stored. The report stays *unverified* until an officer assesses it.” |
 
 ## Three-minute pitch
 

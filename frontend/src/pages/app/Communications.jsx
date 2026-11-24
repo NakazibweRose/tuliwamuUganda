@@ -162,6 +162,7 @@ export function UssdSimulator() {
   return (
     <>
       <PageHeader title={t('ussd.title')} subtitle={t('ussd.subtitle')} />
+      <div className="mb-5"><Alert tone="info">{t('ussd.anonymousNote')}</Alert></div>
       <div className="grid gap-8 lg:grid-cols-[22rem_1fr]">
         <div className="mx-auto w-full max-w-[22rem] rounded-[2.5rem] border-[10px] border-navy bg-navy p-2 shadow-xl">
           <div className="rounded-[1.8rem] bg-[#DDE5DF] p-4">

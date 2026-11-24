@@ -72,7 +72,7 @@ def ussd_events(request):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([HasRole.of({"COMPLAINANT"})])
 def ussd_simulator(request):
     """Web simulator for demonstrations. Uses the SAME UssdEngine as the real gateway callback.
     The client keeps the AT-style cumulative `text` and a random session id."""
@@ -200,7 +200,7 @@ class AnonymousReportViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, v
         report = self.get_object()
         if report.converted_case_id:
             raise ValidationError({"detail": ["Already converted."]})
-        if request.user.role not in {Role.POLICE, Role.PROBATION}:
+        if request.user.role != Role.POLICE:
             raise PermissionDenied()
         if report.verification_status != VerificationStatus.CREDIBLE:
             raise ValidationError({"detail": ["Record the assessment outcome 'needs action' before creating a case."]})

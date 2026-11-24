@@ -86,7 +86,6 @@ export default function App() {
           <Route path="anonymous-reports/:id" element={g(<AnonymousReportDetail />, can('triage_anonymous_reports'))} />
           <Route path="analytics" element={g(<Analytics />, can('view_analytics'))} />
           <Route path="sms" element={g(<SmsDashboard />, can('view_analytics'))} />
-          <Route path="ussd-simulator" element={<UssdSimulator />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="settings" element={<Settings />} />
           <Route path="admin/users" element={g(<Users />, can('manage_users'))} />
@@ -104,6 +103,7 @@ export default function App() {
           <Route path="support" element={<BenSupport />} />
           <Route path="messages" element={<Notifications beneficiary />} />
           <Route path="settings" element={<BenSettings />} />
+          <Route path="ussd" element={<RequireAuth portal="beneficiary" check={can('ussd_simulator')}><UssdSimulator /></RequireAuth>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

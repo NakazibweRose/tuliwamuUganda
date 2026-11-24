@@ -80,11 +80,23 @@ class Command(BaseCommand):
         parser.add_argument("--reset", action="store_true", help="Delete existing demo data first.")
         parser.add_argument("--background", type=int, default=48, help="Number of background cases for analytics.")
         parser.add_argument("--if-empty", action="store_true", help="Only seed when no institutions exist (safe on every start).")
+        parser.add_argument("--sample-data", action="store_true",
+                            help="Also create fictional sample cases, referrals and reports (busy dashboards). Default: clean start.")
+        parser.add_argument("--reset-id", default="",
+                            help="Reset to a clean start once per ID (used on hosting: change DEMO_RESET_ID to reset again).")
 
     def handle(self, *args, **opts):
         if opts["if_empty"] and Institution.objects.exists():
             self.stdout.write("Data already present; skipping demo seed.")
             return
+        if opts["reset_id"]:
+            from core.models import DemoState
+
+            state = DemoState.objects.filter(key="demo_reset_id").first()
+            if state and state.value == opts["reset_id"]:
+                self.stdout.write("Demo reset already applied; nothing to do.")
+                return
+            opts["reset"] = True
         self.rng = random.Random(2026)
         with transaction.atomic():
             if opts["reset"]:
@@ -92,14 +104,20 @@ class Command(BaseCommand):
             self.inst = self.create_institutions()
             self.users = self.create_users()
             self.create_services()
-            self.background_cases(opts["background"])
-            # Start the demo story with clean inboxes.
-            Notification.objects.all().delete()
-            SmsMessage.objects.all().delete()
-            self.story()
-            self.anonymous_reports()
-            self.complaints()
-        self.stdout.write(self.style.SUCCESS(f"Demo data ready. All demo accounts use the password: {DEMO_PASSWORD}"))
+            if opts["sample_data"]:
+                self.background_cases(opts["background"])
+                # Start the demo story with clean inboxes.
+                Notification.objects.all().delete()
+                SmsMessage.objects.all().delete()
+                self.story()
+                self.anonymous_reports()
+                self.complaints()
+            if opts["reset_id"]:
+                from core.models import DemoState
+
+                DemoState.objects.update_or_create(key="demo_reset_id", defaults={"value": opts["reset_id"]})
+        kind = "with sample data" if opts["sample_data"] else "clean start: accounts, institutions and services only"
+        self.stdout.write(self.style.SUCCESS(f"Demo ready ({kind}). All demo accounts use the password: {DEMO_PASSWORD}"))
 
     # ------------------------------------------------------------------
     def reset(self):
@@ -113,6 +131,9 @@ class Command(BaseCommand):
         from cases.models import Child
 
         Child.objects.all().delete()
+        from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+
+        OutstandingToken.objects.all().delete()
         SupportService.objects.all().delete()
         NotificationPreference.objects.all().delete()
         InstitutionMembership.objects.all().delete()

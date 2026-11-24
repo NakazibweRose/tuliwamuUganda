@@ -243,9 +243,12 @@ const body = await page.locator('main').innerText()
 if (body.includes(ref) || body.includes('Demo Child')) throw new Error('Analytics leaks case identifiers')
 ok('analytics shown without identifiers')
 
-// 9. USSD simulator
+await logout()
+
+// 9. USSD simulator (complainants only)
 console.log('9. USSD simulator')
-await page.goto(`${BASE}/app/ussd-simulator`)
+await login('complainant.demo')
+await page.goto(`${BASE}/me/ussd`)
 await page.getByText('WELCOME TO TULIWAMU').waitFor()
 for (const input of ['2', '1', '2', '1', 'Mukono', 'Children working in a quarry', '1', '1', '1']) {
   await page.getByLabel('Your reply').fill(input)
@@ -255,13 +258,14 @@ for (const input of ['2', '1', '2', '1', 'Mukono', 'Children working in a quarry
 await page.getByText(/Kumb: AR-|Ref: AR-/).waitFor()
 await shot('ussd-simulator')
 ok('USSD report submitted in Kiswahili via simulator')
-await logout()
+await page.getByRole('button', { name: 'Sign out' }).first().click()
+await page.waitForURL(/\/login/)
 
 // Mobile beneficiary screenshot
 const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })
 const m = await mobile.newPage()
 await m.goto(`${BASE}/login`)
-await m.getByLabel('Username').fill('caregiver.demo')
+await m.getByLabel('Username').fill('caregiver.other')
 await m.getByLabel('Password').fill(PASSWORD)
 await m.getByRole('button', { name: 'Sign in', exact: true }).click()
 await m.waitForURL(/\/me/)
