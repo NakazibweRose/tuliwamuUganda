@@ -20,6 +20,7 @@ function navFor(user) {
     items.push({ to: '/app/reviews', icon: 'eye', key: 'reviews' })
     items.push({ to: '/app/assistance', icon: 'help', key: 'assistance' })
   }
+  if (p.verify_complaints) items.push({ to: '/app/complaints', icon: 'msg', key: 'complaints', badge: true })
   if (p.triage_anonymous_reports) items.push({ to: '/app/anonymous-reports', icon: 'shield', key: 'anonymousReports' })
   if (p.view_analytics) {
     items.push({ section: 'insight' })
@@ -42,17 +43,21 @@ export default function InstitutionLayout() {
   const t = useT()
   const [open, setOpen] = useState(false)
   const [unread, setUnread] = useState(0)
+  const [openComplaints, setOpenComplaints] = useState(0)
   const location = useLocation()
   const navigate = useNavigate()
 
   useEffect(() => { setOpen(false) }, [location.pathname])
   useEffect(() => {
     let alive = true
-    const poll = () => api.get('/notifications/unread-count/').then((r) => alive && setUnread(r.data.unread)).catch(() => {})
+    const poll = () => {
+      api.get('/notifications/unread-count/').then((r) => alive && setUnread(r.data.unread)).catch(() => {})
+      if (user.permissions?.verify_complaints) api.get('/complaints/', { params: { status: 'OPEN' } }).then((r) => alive && setOpenComplaints(r.data.count)).catch(() => {})
+    }
     poll()
     const id = setInterval(poll, 60000)
     return () => { alive = false; clearInterval(id) }
-  }, [location.pathname])
+  }, [location.pathname, user.permissions])
 
   const nav = (
     <nav className="space-y-0.5 px-3 py-4" aria-label={t('nav.main')}>
@@ -61,7 +66,8 @@ export default function InstitutionLayout() {
       ) : (
         <NavLink key={item.to} to={item.to} end={item.end}
           className={({ isActive }) => `flex min-h-[42px] items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors ${isActive ? 'bg-white/10 text-white shadow-[inset_3px_0_0_#AD9063]' : 'text-white/75 hover:bg-white/5 hover:text-white'}`}>
-          <Icon name={item.icon} className="h-[18px] w-[18px]" /> {t(`nav.${item.key}`)}
+          <Icon name={item.icon} className="h-[18px] w-[18px]" /> <span className="flex-1">{t(`nav.${item.key}`)}</span>
+          {item.badge && openComplaints > 0 && <span className="rounded-full bg-bronze px-2 text-xs font-bold text-white">{openComplaints}</span>}
         </NavLink>
       ))}
     </nav>

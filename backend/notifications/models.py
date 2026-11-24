@@ -22,6 +22,13 @@ class NotificationType(models.TextChoices):
     SUPPORT_COMPLETED = "SUPPORT_COMPLETED", "Support service completed"
     ANONYMOUS_REPORT = "ANONYMOUS_REPORT", "New anonymous report"
     FOLLOW_UP_DUE = "FOLLOW_UP_DUE", "Follow-up assigned"
+    COMPLAINT_RECEIVED = "COMPLAINT_RECEIVED", "Report received"
+    COMPLAINT_NEEDS_INFO = "COMPLAINT_NEEDS_INFO", "Police need more information"
+    COMPLAINT_MESSAGE = "COMPLAINT_MESSAGE", "Message from police"
+    COMPLAINT_REGISTERED = "COMPLAINT_REGISTERED", "Report verified, case registered"
+    NEW_COMPLAINT = "NEW_COMPLAINT", "New report to verify"
+    COMPLAINT_REPLY = "COMPLAINT_REPLY", "Complainant replied"
+    COMPLAINT_OVERDUE = "COMPLAINT_OVERDUE", "Report waiting more than 24 hours"
 
 
 class Notification(TimeStampedModel):

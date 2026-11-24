@@ -10,6 +10,7 @@ from audit.views import AuditLogViewSet
 from cases import beneficiary_views as ben
 from cases.views import CaseUpdateViewSet, CaseViewSet, FollowUpViewSet, GrantViewSet
 from communications import views as comm
+from complaints.views import ComplaintViewSet, MyReportsViewSet
 from institutions.views import InstitutionViewSet
 from notifications.views import NotificationViewSet
 from referrals.views import ReferralViewSet
@@ -29,6 +30,8 @@ router.register("support-services", SupportServiceViewSet, basename="support-ser
 router.register("assistance-requests", AssistanceRequestStaffViewSet, basename="assistance-request")
 router.register("anonymous-reports", comm.AnonymousReportViewSet, basename="anonymous-report")
 router.register("audit-logs", AuditLogViewSet, basename="audit-log")
+router.register("complaints", ComplaintViewSet, basename="complaint")
+router.register("my/reports", MyReportsViewSet, basename="my-report")
 router.register("admin/users", account_views.AdminUserViewSet, basename="admin-user")
 
 

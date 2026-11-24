@@ -12,6 +12,7 @@ class Role(models.TextChoices):
     LEGAL_AID = "LEGAL_AID", "Legal aid / support service provider"
     CAREGIVER = "CAREGIVER", "Parent / guardian / authorised caregiver"
     BENEFICIARY = "BENEFICIARY", "Child victim / protected beneficiary"
+    COMPLAINANT = "COMPLAINANT", "Complainant (reports a case to the police)"
     ADMIN = "ADMIN", "System administrator"
 
 
@@ -19,7 +20,8 @@ INSTITUTIONAL_ROLES = {
     Role.POLICE, Role.MEDICAL, Role.FORENSIC, Role.PROSECUTOR,
     Role.COURT, Role.PROBATION, Role.LEGAL_AID,
 }
-BENEFICIARY_ROLES = {Role.CAREGIVER, Role.BENEFICIARY}
+BENEFICIARY_ROLES = {Role.CAREGIVER, Role.BENEFICIARY, Role.COMPLAINANT}
+COMPLAINT_REVIEW_ROLES = {Role.POLICE}
 CASE_REGISTRATION_ROLES = {Role.POLICE, Role.PROBATION}
 ANONYMOUS_REPORT_TRIAGE_ROLES = {Role.POLICE, Role.PROBATION}
 REFERRAL_CREATOR_ROLES = {Role.POLICE, Role.MEDICAL, Role.PROSECUTOR, Role.PROBATION, Role.LEGAL_AID}

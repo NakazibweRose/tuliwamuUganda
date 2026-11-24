@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "audit",
     "translations",
     "communications",
+    "complaints",
 ]
 
 MIDDLEWARE = [
@@ -151,6 +152,7 @@ REST_FRAMEWORK = {
         "login": "30/min",
         "password_reset": "5/hour",
         "ussd": "120/min",
+        "complaint": "6/hour",
     },
     "EXCEPTION_HANDLER": "core.exceptions.api_exception_handler",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
@@ -219,6 +221,16 @@ EMERGENCY_CONTACT_TEXT = os.environ.get(
     "EMERGENCY_CONTACT_TEXT", "Child Helpline 116 (toll-free). Police 999 or 112."
 )
 
+# --- Sunbird AI (speech-to-text, translation, Sunflower LLM) for complainant reports ---
+SUNBIRD_API_URL = os.environ.get("SUNBIRD_API_URL", "https://api.sunbird.ai")
+SUNBIRD_API_KEY = os.environ.get("SUNBIRD_API_KEY", "")
+SUNBIRD_TIMEOUT_SECONDS = int(os.environ.get("SUNBIRD_TIMEOUT_SECONDS", "240"))
+COMPLAINT_MAX_AUDIO_BYTES = 6 * 1024 * 1024
+COMPLAINT_RESPONSE_HOURS = 24
+COMPLAINT_DEFAULT_POLICE_STATION = os.environ.get("COMPLAINT_DEFAULT_POLICE_STATION", "")
+# Run the AI pipeline in a background thread (False in tests: run inline).
+COMPLAINT_AI_ASYNC = True
+
 # --- Analytics privacy ---
 ANALYTICS_MIN_CELL_SIZE = int(os.environ.get("ANALYTICS_MIN_CELL_SIZE", "5"))
 
@@ -236,4 +248,5 @@ import sys  # noqa: E402
 
 if "test" in sys.argv:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+    COMPLAINT_AI_ASYNC = False
     SECURE_SSL_REDIRECT = False

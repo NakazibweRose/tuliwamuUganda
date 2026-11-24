@@ -14,6 +14,13 @@ class AppointmentType(models.TextChoices):
     OTHER = "OTHER", "Other"
 
 
+class Attendees(models.TextChoices):
+    CHILD_AND_CAREGIVER = "CHILD_AND_CAREGIVER", "The child and the complainant / caregiver"
+    CHILD = "CHILD", "The child"
+    CAREGIVER = "CAREGIVER", "The complainant / caregiver"
+    NOT_REQUIRED = "NOT_REQUIRED", "Family attendance not required"
+
+
 class AppointmentStatus(models.TextChoices):
     SCHEDULED = "SCHEDULED", "Scheduled"
     RESCHEDULED = "RESCHEDULED", "Rescheduled"
@@ -33,6 +40,7 @@ class Appointment(TimeStampedModel):
     internal_note = models.CharField(max_length=500, blank=True)
     beneficiary_note = models.CharField(max_length=300, blank=True, help_text="Plain-language note for the family.")
     visible_to_beneficiary = models.BooleanField(default=True)
+    attendees = models.CharField(max_length=20, choices=Attendees.choices, default=Attendees.CHILD_AND_CAREGIVER)
     status = models.CharField(max_length=12, choices=AppointmentStatus.choices, default=AppointmentStatus.SCHEDULED, db_index=True)
     reminder_sent_at = models.DateTimeField(null=True, blank=True)
 

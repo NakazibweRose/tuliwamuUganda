@@ -32,7 +32,7 @@ export function JourneyPath({ current }) {
   )
 }
 
-function NextAppointment({ appt }) {
+export function NextAppointment({ appt }) {
   const { t, lang } = useI18n()
   if (!appt) return null
   const days = relativeDays(appt.scheduled_for)
@@ -47,57 +47,49 @@ function NextAppointment({ appt }) {
         <p className="text-sm text-ink">{fmtDateTime(appt.scheduled_for, lang)} · {appt.public_location}</p>
         <p className="text-sm font-semibold text-[#6b5636]">{days <= 0 ? t('ben.today') : t('ben.inDays', { n: days })}</p>
         {appt.status === 'RESCHEDULED' && <p className="text-xs text-warn-700">{t('ben.dateChanged')}</p>}
+        {appt.attendees && appt.attendees !== 'NOT_REQUIRED' && <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-navy"><Icon name="users" className="h-3.5 w-3.5" />{t(`attendees.${appt.attendees}`)}</p>}
         {appt.note && <p className="mt-1 text-sm text-ink">{appt.note}</p>}
       </div>
     </div>
   )
 }
 
-export function BeneficiaryHome() {
+/** One registered case the signed-in person may follow (approved, plain-language content only). */
+export function CaseCard({ c }) {
   const { t, lang } = useI18n()
-  const { user } = useAuth()
-  const { data, error, loading, reload } = useApi('/beneficiary/cases/')
   return (
-    <>
-      <h1 className="font-serif text-2xl font-semibold text-navy">{t('ben.hello', { name: user.full_name?.split(' (')[0] || '' })}</h1>
-      <p className="mt-1 text-muted">{t('ben.intro')}</p>
-      <div className="mt-6 space-y-4">
-        {loading ? <Loading /> : error ? <ErrorState error={error} onRetry={reload} /> : data.length === 0 ? (
-          <Card><EmptyState icon="shield" title={t('ben.noCases')}>{t('ben.noCasesHint')}</EmptyState></Card>
-        ) : data.map((c) => (
-          <Card key={c.id} className="overflow-hidden">
-            <div className="border-b border-line bg-navy px-5 py-4 text-white">
-              <p className="text-xs uppercase tracking-wider text-white/60">{t('ben.yourCase')}</p>
-              <p className="font-mono text-lg font-semibold">{c.reference}</p>
-            </div>
-            <div className="space-y-5 p-5">
-              <section aria-labelledby={`q1-${c.id}`}>
-                <h2 id={`q1-${c.id}`} className="mb-3 text-sm font-semibold text-muted">{t('ben.q.where')}</h2>
-                <JourneyPath current={c.journey_step} />
-              </section>
-              {c.last_update_message && (
-                <section className="rounded-xl bg-teal-50 p-4">
-                  <h2 className="text-sm font-semibold text-teal-700">{t('ben.q.latest')}</h2>
-                  <p className="mt-1 text-ink">{c.last_update_message}</p>
-                  <p className="mt-1 text-xs text-muted">{fmtDate(c.last_update_at, lang)}</p>
-                </section>
-              )}
-              {c.next_appointment && <section><h2 className="mb-2 text-sm font-semibold text-muted">{t('ben.q.attend')}</h2><NextAppointment appt={c.next_appointment} /></section>}
-              <section>
-                <h2 className="text-sm font-semibold text-muted">{t('ben.q.help')}</h2>
-                <p className="mt-1 text-ink">{t('ben.officer', { name: c.support_officer.name, institution: c.support_officer.institution })}</p>
-                {c.support_officer.contact && <p className="text-sm text-muted">{c.support_officer.contact}</p>}
-              </section>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <Link to={`/me/cases/${c.id}`} className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg bg-navy px-4 font-semibold text-white hover:bg-deep">{t('ben.seeEverything')}<Icon name="arrowRight" className="h-4 w-4" /></Link>
-                <Link to={`/me/help?case=${c.id}`} className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 font-semibold text-deep hover:bg-ivory"><Icon name="help" className="h-4 w-4" />{t('ben.askHelp')}</Link>
-              </div>
-            </div>
-          </Card>
-        ))}
-        <Alert tone="danger" title={t('ben.emergencyTitle')}>{t('ben.emergency')}</Alert>
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-line bg-navy px-5 py-4 text-white">
+        <div>
+          <p className="text-xs uppercase tracking-wider text-white/60">{t('ben.yourCase')}</p>
+          <p className="font-mono text-lg font-semibold">{c.reference}</p>
+        </div>
+        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">{t(`journey.${c.journey_step}`)}</span>
       </div>
-    </>
+      <div className="space-y-5 p-5">
+        <section>
+          <h2 className="mb-3 text-sm font-semibold text-muted">{t('ben.q.where')}</h2>
+          <JourneyPath current={c.journey_step} />
+        </section>
+        {c.next_appointment && <section><h2 className="mb-2 text-sm font-semibold text-muted">{t('ben.q.attend')}</h2><NextAppointment appt={c.next_appointment} /></section>}
+        {c.last_update_message && (
+          <section className="rounded-xl bg-teal-50 p-4">
+            <h2 className="text-sm font-semibold text-teal-700">{t('ben.q.latest')}</h2>
+            <p className="mt-1 text-ink">{c.last_update_message}</p>
+            <p className="mt-1 text-xs text-muted">{fmtDate(c.last_update_at, lang)}</p>
+          </section>
+        )}
+        <section>
+          <h2 className="text-sm font-semibold text-muted">{t('ben.q.help')}</h2>
+          <p className="mt-1 text-ink">{t('ben.officer', { name: c.support_officer.name, institution: c.support_officer.institution })}</p>
+          {c.support_officer.contact && <p className="text-sm text-muted">{c.support_officer.contact}</p>}
+        </section>
+        <div className="flex flex-wrap gap-2 pt-1">
+          <Link to={`/me/cases/${c.id}`} className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg bg-navy px-4 font-semibold text-white hover:bg-deep">{t('ben.seeEverything')}<Icon name="arrowRight" className="h-4 w-4" /></Link>
+          <Link to={`/me/requests?case=${c.id}`} className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 font-semibold text-deep hover:bg-ivory"><Icon name="msg" className="h-4 w-4" />{t('ben.messageOfficer')}</Link>
+        </div>
+      </div>
+    </Card>
   )
 }
 
@@ -153,7 +145,7 @@ export function BeneficiaryCase() {
       </Card>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <Link to={`/me/help?case=${c.id}`} className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-lg bg-navy px-4 font-semibold text-white hover:bg-deep"><Icon name="help" className="h-5 w-5" />{t('ben.askHelp')}</Link>
+        <Link to={`/me/requests?case=${c.id}`} className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-lg bg-navy px-4 font-semibold text-white hover:bg-deep"><Icon name="msg" className="h-5 w-5" />{t('ben.messageOfficer')}</Link>
         <Link to="/me/support" className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 font-semibold text-deep hover:bg-ivory"><Icon name="heart" className="h-5 w-5" />{t('ben.nav.support')}</Link>
       </div>
     </>

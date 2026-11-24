@@ -8,7 +8,7 @@ import { useT } from '../i18n'
 
 const ITEMS = [
   { to: '/me', icon: 'home', key: 'home', end: true },
-  { to: '/me/help', icon: 'help', key: 'help' },
+  { to: '/me/help', icon: 'msg', key: 'help' },
   { to: '/me/support', icon: 'heart', key: 'support' },
   { to: '/me/messages', icon: 'bell', key: 'messages' },
   { to: '/me/settings', icon: 'settings', key: 'settings' },

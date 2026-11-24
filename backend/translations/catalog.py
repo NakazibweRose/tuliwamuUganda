@@ -55,6 +55,26 @@ EN = {
     "notif.FOLLOW_UP_DUE.title": "Follow-up assigned",
     "notif.FOLLOW_UP_DUE.body": "A follow-up task has been assigned to you in Tuliwamu.",
 
+    # ---- Complainant reports ----
+    "notif.COMPLAINT_RECEIVED.title": "We have received your report",
+    "notif.COMPLAINT_RECEIVED.body": "Thank you for telling us. A police officer will review your report and get back to you within 24 hours. Please keep checking Tuliwamu.",
+    "notif.COMPLAINT_NEEDS_INFO.title": "The police have a question",
+    "notif.COMPLAINT_NEEDS_INFO.body": "A police officer needs a little more information about your report. Please open Tuliwamu to reply.",
+    "notif.COMPLAINT_MESSAGE.title": "New message from the police",
+    "notif.COMPLAINT_MESSAGE.body": "You have a new message from the police about your report. Please open Tuliwamu.",
+    "notif.COMPLAINT_REGISTERED.title": "Your report has been verified",
+    "notif.COMPLAINT_REGISTERED.body": "The police have verified your report and opened a case. Open Tuliwamu to see what happens next.",
+    "notif.NEW_COMPLAINT.title": "New report to verify",
+    "notif.NEW_COMPLAINT.body": "A new report is waiting for verification in Tuliwamu. Please respond within 24 hours.",
+    "notif.COMPLAINT_REPLY.title": "Complainant replied",
+    "notif.COMPLAINT_REPLY.body": "A complainant has replied about their report. Please log in to Tuliwamu.",
+    "notif.COMPLAINT_OVERDUE.title": "Report waiting over 24 hours",
+    "notif.COMPLAINT_OVERDUE.body": "A report has waited more than 24 hours for verification. Please review it in Tuliwamu.",
+    "sms.COMPLAINT_RECEIVED": "You have an update on Tuliwamu. Please log in or contact your support officer.",
+    "sms.COMPLAINT_NEEDS_INFO": "You have an update on Tuliwamu. Please log in or contact your support officer.",
+    "sms.COMPLAINT_MESSAGE": "You have an update on Tuliwamu. Please log in or contact your support officer.",
+    "sms.COMPLAINT_REGISTERED": "You have an update on Tuliwamu. Please log in or contact your support officer.",
+
     # ---- USSD ----
     "ussd.welcome": "WELCOME TO TULIWAMU\nChoose your language:",
     "ussd.main": "Choose:\n1. Report a child protection concern\n2. Check an anonymous report\n3. Support services\n4. Exit",

@@ -28,7 +28,11 @@ const Users = lazy(() => import('./pages/admin/Admin').then((m) => ({ default: m
 const Institutions = lazy(() => import('./pages/admin/Admin').then((m) => ({ default: m.Institutions })))
 const Services = lazy(() => import('./pages/admin/Admin').then((m) => ({ default: m.Services })))
 const AuditLogs = lazy(() => import('./pages/admin/Admin').then((m) => ({ default: m.AuditLogs })))
-const BenHome = lazy(() => import('./pages/me/Beneficiary').then((m) => ({ default: m.BeneficiaryHome })))
+const BenHome = lazy(() => import('./pages/me/Complainant').then((m) => ({ default: m.ComplainantHome })))
+const ReportWizard = lazy(() => import('./pages/me/Complainant').then((m) => ({ default: m.ReportWizard })))
+const ReportDetail = lazy(() => import('./pages/me/Complainant').then((m) => ({ default: m.ReportDetail })))
+const ComplaintList = lazy(() => import('./pages/app/Complaints').then((m) => ({ default: m.ComplaintList })))
+const ComplaintDetail = lazy(() => import('./pages/app/Complaints').then((m) => ({ default: m.ComplaintDetail })))
 const BenCase = lazy(() => import('./pages/me/Beneficiary').then((m) => ({ default: m.BeneficiaryCase })))
 const BenHelp = lazy(() => import('./pages/me/Beneficiary').then((m) => ({ default: m.RequestHelp })))
 const BenSupport = lazy(() => import('./pages/me/Beneficiary').then((m) => ({ default: m.SupportServices })))
@@ -76,6 +80,8 @@ export default function App() {
           <Route path="follow-ups" element={g(<FollowUps />, notAdmin)} />
           <Route path="reviews" element={g(<Reviews />, notAdmin)} />
           <Route path="assistance" element={g(<Assistance />, notAdmin)} />
+          <Route path="complaints" element={g(<ComplaintList />, can('verify_complaints'))} />
+          <Route path="complaints/:id" element={g(<ComplaintDetail />, can('verify_complaints'))} />
           <Route path="anonymous-reports" element={g(<AnonymousReports />, can('triage_anonymous_reports'))} />
           <Route path="anonymous-reports/:id" element={g(<AnonymousReportDetail />, can('triage_anonymous_reports'))} />
           <Route path="analytics" element={g(<Analytics />, can('view_analytics'))} />
@@ -92,7 +98,8 @@ export default function App() {
         <Route path="/me" element={<RequireAuth portal="beneficiary"><BeneficiaryLayout /></RequireAuth>}>
           <Route index element={<BenHome />} />
           <Route path="cases/:id" element={<BenCase />} />
-          <Route path="help" element={<BenHelp />} />
+          <Route path="help" element={<ReportWizard />} />
+          <Route path="reports/:id" element={<ReportDetail />} />
           <Route path="requests" element={<BenHelp />} />
           <Route path="support" element={<BenSupport />} />
           <Route path="messages" element={<Notifications beneficiary />} />

@@ -37,6 +37,7 @@ professional or judicial decisions.
 | Anonymised analytics: region/month level, k=5 small-cell suppression, service-gap flags | ✅ Working |
 | Audit log + security events (admin cannot read case content) | ✅ Working |
 | Six-language UI with a central catalogue and English fallback | ✅ English complete · Kiswahili & Luganda **drafts** · Runyankole, Acholi, Ateso **partial** — all non-English text needs review by qualified speakers |
+| **Complainant portal:** welcome page → report by voice note (Luganda, Acholi, English and more) and/or text → Sunbird AI transcription, translation and triage → police verification within 24 h → two-way auto-translated messages → case registration → live tracking ([details](docs/08-complainant-reporting.md)) | ✅ Working with the real Sunbird API when `SUNBIRD_API_KEY` is set; without it, reports still reach police without AI |
 | USSD anonymous reporting & status check (Africa's Talking callback format) + web simulator using the same engine | ✅ Working; live short code needs an Africa's Talking account |
 | SMS via Africa's Talking SDK with delivery callbacks, consent, quiet hours, deduplication | ✅ Implemented. **Without credentials, a mock provider records messages as “Simulated”. Nothing is reported as delivered unless a delivery report says so.** |
 | PWA app shell (API responses never cached) | ✅ Basic |
@@ -93,7 +94,8 @@ The login page also has a one-click account picker.
 | `probation.officer` | Probation & social welfare (supervisor) | Kampala Demo Probation Office |
 | `legalaid.officer`, `support.counsellor` | Legal aid / psychosocial support | Demo Legal Aid Clinic / Psychosocial Centre |
 | `caregiver.demo` | Caregiver with an **approved** grant for Demo Child A (SMS preference on, Luganda) | — |
-| `child.demo` | Demo Child A (15–17), **self-access** grant | — |
+| `complainant.demo` | **Complainant** with no reports yet — shows the welcome page and the voice/written reporting flow | — |
+| `complainant.two` | Complainant (replies in Acholi) whose written report is already waiting in the police queue | — |
 | `caregiver.other` | Caregiver with **no** grants (use to show caregivers see nothing by default) | — |
 | `admin` | System administrator (no case access) | — |
 
@@ -148,6 +150,7 @@ docs/                   architecture, API, deployment, security, research, submi
 5. [Research & evidence (sources, with what is and isn't verified)](docs/05-research-and-evidence.md)
 6. [Two-page hackathon submission](docs/06-submission.md)
 7. [Demo script & pitch](docs/07-demo-script-and-pitch.md)
+8. [Complainant reporting with voice & Sunbird AI](docs/08-complainant-reporting.md)
 
 ## Known limitations
 

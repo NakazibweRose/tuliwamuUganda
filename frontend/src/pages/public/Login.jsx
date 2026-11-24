@@ -10,7 +10,7 @@ import { useT } from '../../i18n'
 export const DEMO_ACCOUNTS = [
   ['police.officer', 'POLICE'], ['police.supervisor', 'POLICE'], ['medical.officer', 'MEDICAL'], ['forensic.officer', 'FORENSIC'],
   ['prosecutor', 'PROSECUTOR'], ['court.registry', 'COURT'], ['probation.officer', 'PROBATION'], ['legalaid.officer', 'LEGAL_AID'],
-  ['caregiver.demo', 'CAREGIVER'], ['child.demo', 'BENEFICIARY'], ['admin', 'ADMIN'], ['gulu.officer', 'POLICE'],
+  ['complainant.demo', 'COMPLAINANT'], ['caregiver.demo', 'CAREGIVER'], ['complainant.two', 'COMPLAINANT'], ['admin', 'ADMIN'], ['gulu.officer', 'POLICE'],
 ]
 
 export function homeFor(user) {

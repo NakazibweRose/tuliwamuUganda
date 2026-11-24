@@ -181,12 +181,12 @@ function AppointmentModal({ c, open, onClose, onDone, existing }) {
   const types = user.role === 'COURT' ? APPOINTMENT_TYPES : APPOINTMENT_TYPES.filter((x) => x !== 'COURT_HEARING')
   const { register, handleSubmit, formState: { isSubmitting } } = useForm({
     values: existing ? { ...existing, scheduled_for: isoToLocalInput(existing.scheduled_for) }
-      : { type: types[0], visible_to_beneficiary: true, scheduled_for: '', public_location: '', beneficiary_note: '', internal_note: '' },
+      : { type: types[0], visible_to_beneficiary: true, attendees: 'CHILD_AND_CAREGIVER', scheduled_for: '', public_location: '', beneficiary_note: '', internal_note: '' },
   })
   const submit = async (v) => {
     setError(null)
     const body = { type: v.type, scheduled_for: localInputToIso(v.scheduled_for), public_location: v.public_location,
-      beneficiary_note: v.beneficiary_note, internal_note: v.internal_note || '', visible_to_beneficiary: v.visible_to_beneficiary }
+      beneficiary_note: v.beneficiary_note, internal_note: v.internal_note || '', visible_to_beneficiary: v.visible_to_beneficiary, attendees: v.attendees }
     if (existing) body.status = v.status
     try {
       if (existing) await api.patch(`/appointments/${existing.id}/`, body)
@@ -203,6 +203,8 @@ function AppointmentModal({ c, open, onClose, onDone, existing }) {
           {existing && <Field label={t('appointments.status')}>{(a) => <Select {...a} {...register('status')}>
             {['SCHEDULED', 'RESCHEDULED', 'COMPLETED', 'MISSED', 'CANCELLED'].map((x) => <option key={x} value={x}>{t(`appointmentStatus.${x}`)}</option>)}</Select>}</Field>}
         </div>
+        <Field label={t('appointments.attendees')} hint={t('appointments.attendeesHint')}>{(a) => <Select {...a} {...register('attendees')}>
+          {['CHILD_AND_CAREGIVER', 'CHILD', 'CAREGIVER', 'NOT_REQUIRED'].map((x) => <option key={x} value={x}>{t(`attendees.${x}`)}</option>)}</Select>}</Field>
         <Field label={t('appointments.location')} hint={t('appointments.locationHint')} required>{(a) => <Input {...a} {...register('public_location', { required: true })} />}</Field>
         <Field label={t('appointments.familyNote')} hint={t('appointments.familyNoteHint')}>{(a) => <Input {...a} maxLength={300} {...register('beneficiary_note')} />}</Field>
         <Field label={t('appointments.internalNote')}>{(a) => <Input {...a} maxLength={500} {...register('internal_note')} />}</Field>

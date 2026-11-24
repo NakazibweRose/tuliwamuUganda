@@ -37,7 +37,7 @@ def _next_allowed_time(pref, now):
     return candidate if candidate > now else candidate + timedelta(days=1)
 
 
-def send_discreet_sms(user, notification_type, dedup_key, *, now=None):
+def send_discreet_sms(user, notification_type, dedup_key, *, now=None, lang=None):
     """Queue and send a discreet, template-based SMS to a user who has consented.
 
     Returns the SmsMessage (existing one if this dedup_key was already used), or None if the
@@ -50,14 +50,16 @@ def send_discreet_sms(user, notification_type, dedup_key, *, now=None):
     if existing:
         return existing
 
-    language = pref.preferred_language or user.preferred_language
+    language = lang or pref.preferred_language or user.preferred_language
     phone = normalise_ug_phone(pref.safe_phone)
-    body = t(f"notif.{notification_type}.body", language)
+    # Some in-app texts reveal that a report exists; SMS uses an even more generic template for those.
+    sms_key = f"sms.{notification_type}" if t(f"sms.{notification_type}", "en") != f"sms.{notification_type}" else f"notif.{notification_type}.body"
+    body = t(sms_key, language)
     sms = SmsMessage(
         recipient=user,
         phone_encrypted=phone or "",
         phone_masked=mask_phone(phone),
-        message_template=f"notif.{notification_type}.body",
+        message_template=sms_key,
         language=language,
         notification_type=notification_type,
         body=body[:320],

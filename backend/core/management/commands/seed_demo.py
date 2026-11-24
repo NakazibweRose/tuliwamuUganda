@@ -98,10 +98,14 @@ class Command(BaseCommand):
             SmsMessage.objects.all().delete()
             self.story()
             self.anonymous_reports()
+            self.complaints()
         self.stdout.write(self.style.SUCCESS(f"Demo data ready. All demo accounts use the password: {DEMO_PASSWORD}"))
 
     # ------------------------------------------------------------------
     def reset(self):
+        from complaints.models import Complaint
+
+        Complaint.objects.all().delete()
         for model in [AuditLog, Notification, SmsMessage, UssdSession, AnonymousReportEvent, AnonymousReport, FollowUp,
                       AssistanceRequest, Appointment, ReferralStatusHistory, Referral, CaseUpdate, CaseStatusHistory]:
             model.objects.all().delete()
@@ -139,7 +143,8 @@ class Command(BaseCommand):
             users[username] = u
         users["admin"] = self._user("admin", "Demo System Administrator", "ADMIN")
         users["caregiver.demo"] = self._user("caregiver.demo", "Demo Caregiver (Aunt of Demo Child A)", "CAREGIVER", preferred_language="lg")
-        users["child.demo"] = self._user("child.demo", "Demo Child A", "BENEFICIARY")
+        users["complainant.demo"] = self._user("complainant.demo", "Demo Complainant", "COMPLAINANT")
+        users["complainant.two"] = self._user("complainant.two", "Demo Complainant Two", "COMPLAINANT", preferred_language="ach")
         users["caregiver.other"] = self._user("caregiver.other", "Demo Caregiver (no grants)", "CAREGIVER")
         # Discreet SMS preference for the caregiver. Placeholder number is only set while the mock
         # provider (or the Africa's Talking sandbox) is in use, so seed data can never text a real phone.
@@ -275,7 +280,6 @@ class Command(BaseCommand):
         case_services.review_update(police, upd, True)
         for who, rel, basis in [
             (u["caregiver.demo"], "CAREGIVER", "Aunt currently caring for the child; probation assessment found no conflict of interest (fictional)."),
-            (u["child.demo"], "SELF", "Child aged 15–17 asked to follow her own case; agreed with probation officer (fictional)."),
         ]:
             g = case_services.create_grant(police, case, who, dict(relationship=rel, basis=basis, conflict_check_confirmed=True))
             case_services.approve_grant(sup, g)
@@ -285,6 +289,22 @@ class Command(BaseCommand):
                                 referral_needs=["MEDICAL", "PSYCHOSOCIAL"], protection_concerns="Fictional demo concern.")
         self._refer(police, case_b, "hospital", "MEDICAL", days_ago=0)
         Notification.objects.filter(recipient=police).delete()
+
+    def complaints(self):
+        """One written report already waiting in the police verification queue (no AI output is invented:
+        officers can press "Run AI analysis" when Sunbird AI is configured)."""
+        from complaints.models import Complaint, ComplaintEvent
+        from core.references import unique_reference
+
+        c = Complaint.objects.create(
+            reference=unique_reference(Complaint, "reference", "CR", 6), complainant=self.users["complainant.two"],
+            concerning="CHILD_IN_CARE", child_age_range="12-14", district="Kampala", region="CENTRAL",
+            language="en", reply_language="ach", ai_consent=True, ai_status="SKIPPED", ai_error="seeded_demo",
+            written_statement=("Fictional demo report: the girl I care for (13) says a man at the boda stage near her school "
+                               "keeps touching her and offering her money. It happened again yesterday after school."),
+            status="AWAITING_VERIFICATION", assigned_institution=self.inst["kla_police"],
+        )
+        ComplaintEvent.objects.create(complaint=c, action="SUBMITTED", note="Seeded demo report")
 
     def anonymous_reports(self):
         samples = [

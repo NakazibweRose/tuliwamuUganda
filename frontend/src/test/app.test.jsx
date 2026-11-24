@@ -54,16 +54,30 @@ describe('authentication journeys', () => {
     expect(await screen.findAllByText('This field is required.')).toHaveLength(2)
   })
 
-  it('sends a caregiver to the beneficiary portal, not the institutional dashboard', async () => {
-    api.post.mockResolvedValueOnce({ data: { access: 'x', user: { id: '1', role: 'CAREGIVER', full_name: 'Demo Caregiver', preferred_language: 'en', permissions: { beneficiary_portal: true } } } })
-    api.get.mockImplementation((url) => Promise.resolve({ data: url === '/beneficiary/cases/' ? [] : { unread: 0 } }))
+  it('sends a complainant to a welcome page with no case details before they report', async () => {
+    api.post.mockResolvedValueOnce({ data: { access: 'x', user: { id: '1', role: 'COMPLAINANT', full_name: 'Demo Complainant', preferred_language: 'en', permissions: { beneficiary_portal: true } } } })
+    api.get.mockImplementation((url) => Promise.resolve({ data: ['/beneficiary/cases/', '/my/reports/'].includes(url) ? [] : { unread: 0 } }))
     wrap(<AuthProvider><App /></AuthProvider>, '/login')
-    await userEvent.type(await screen.findByLabelText('Username'), 'caregiver.demo')
+    await userEvent.type(await screen.findByLabelText('Username'), 'complainant.demo')
     await userEvent.type(screen.getByLabelText('Password'), 'pw')
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
-    expect(await screen.findByText('Nothing to show yet')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Welcome, Demo Complainant' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Tell us what happened/ })).toHaveAttribute('href', '/me/help')
+    expect(screen.queryByText(/TLW-/)).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Quick exit/ })).toBeInTheDocument()
     expect(screen.queryByText('Cases')).not.toBeInTheDocument()
+  })
+
+  it('shows a report waiting for police verification with the 24-hour promise', async () => {
+    api.post.mockResolvedValueOnce({ data: { access: 'x', user: { id: '1', role: 'COMPLAINANT', full_name: 'Demo Complainant', preferred_language: 'en', permissions: { beneficiary_portal: true } } } })
+    const report = { id: 'r1', reference: 'CR-ABC234', status: 'AWAITING_VERIFICATION', reply_language: 'ach', created_at: new Date().toISOString(), respond_by: new Date(Date.now() + 20 * 3600000).toISOString(), unread_messages: 0, case: null }
+    api.get.mockImplementation((url) => Promise.resolve({ data: url === '/my/reports/' ? [report] : url === '/beneficiary/cases/' ? [] : { unread: 0 } }))
+    wrap(<AuthProvider><App /></AuthProvider>, '/login')
+    await userEvent.type(await screen.findByLabelText('Username'), 'complainant.demo')
+    await userEvent.type(screen.getByLabelText('Password'), 'pw')
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+    expect(await screen.findByText('CR-ABC234')).toBeInTheDocument()
+    expect(screen.getByText(/answer you in Acholi within 24 hours/)).toBeInTheDocument()
   })
 
   it('shows a generic error for wrong credentials', async () => {

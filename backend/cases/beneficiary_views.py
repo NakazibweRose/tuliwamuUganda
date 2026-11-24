@@ -44,7 +44,7 @@ def _appointments(case):
 def _appointment_dict(a):
     return {
         "id": str(a.id), "type": a.type, "scheduled_for": a.scheduled_for, "previous_scheduled_for": a.previous_scheduled_for,
-        "status": a.status, "public_location": a.public_location, "note": a.beneficiary_note,
+        "status": a.status, "public_location": a.public_location, "note": a.beneficiary_note, "attendees": a.attendees,
         "institution": a.institution.name,
     }
 

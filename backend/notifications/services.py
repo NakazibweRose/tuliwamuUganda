@@ -17,14 +17,14 @@ def get_preference(user):
     return pref
 
 
-def notify(user, notification_type, *, link="", dedup_key=""):
+def notify(user, notification_type, *, link="", dedup_key="", lang=None):
     """Create a discreet in-app notification and, if the user opted in, an SMS or email.
 
     The message text comes only from fixed templates — callers cannot inject case details."""
     if not user or not user.is_active:
         return None
     pref = get_preference(user)
-    lang = pref.preferred_language or user.preferred_language
+    lang = lang or pref.preferred_language or user.preferred_language
     try:
         with transaction.atomic():
             notification = Notification.objects.create(
@@ -41,7 +41,7 @@ def notify(user, notification_type, *, link="", dedup_key=""):
     if pref.preferred_channel == "SMS":
         from communications.sms.services import send_discreet_sms
 
-        send_discreet_sms(user, notification_type, dedup_key=f"{notification_type}:{user.pk}:{dedup_key or notification.pk}")
+        send_discreet_sms(user, notification_type, dedup_key=f"{notification_type}:{user.pk}:{dedup_key or notification.pk}", lang=lang)
     elif pref.preferred_channel == "EMAIL" and user.email:
         try:
             send_mail(notification.title, notification.body, None, [user.email], fail_silently=False)

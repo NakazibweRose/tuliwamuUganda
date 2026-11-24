@@ -15,7 +15,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = ["id", "case_id", "case_reference", "institution", "type", "scheduled_for", "previous_scheduled_for",
-                  "public_location", "internal_note", "beneficiary_note", "visible_to_beneficiary", "status",
+                  "public_location", "internal_note", "beneficiary_note", "visible_to_beneficiary", "attendees", "status",
                   "reminder_sent_at", "created_at"]
         read_only_fields = ["id", "previous_scheduled_for", "reminder_sent_at", "created_at"]
 
@@ -30,7 +30,7 @@ class AppointmentWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = ["case_id", "type", "scheduled_for", "public_location", "internal_note", "beneficiary_note",
-                  "visible_to_beneficiary", "status"]
+                  "visible_to_beneficiary", "attendees", "status"]
 
     def validate_scheduled_for(self, value):
         from django.utils import timezone
