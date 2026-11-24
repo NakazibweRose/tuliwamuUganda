@@ -103,7 +103,7 @@ export function ReferralDetail() {
               </dl>
             )}
           </Card>
-          {(r.outcome_summary || r.restricted_notes != null) && (
+          {(r.outcome_summary || r.restricted_notes) && (
             <Card>
               <CardHeader title={t('referralDetail.outcome')} />
               <div className="space-y-4 p-5">
