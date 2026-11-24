@@ -79,8 +79,12 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--reset", action="store_true", help="Delete existing demo data first.")
         parser.add_argument("--background", type=int, default=48, help="Number of background cases for analytics.")
+        parser.add_argument("--if-empty", action="store_true", help="Only seed when no institutions exist (safe on every start).")
 
     def handle(self, *args, **opts):
+        if opts["if_empty"] and Institution.objects.exists():
+            self.stdout.write("Data already present; skipping demo seed.")
+            return
         self.rng = random.Random(2026)
         with transaction.atomic():
             if opts["reset"]:

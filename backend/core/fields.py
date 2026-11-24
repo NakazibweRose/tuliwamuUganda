@@ -17,9 +17,13 @@ _PREFIX = "enc1:"
 def _fernet():
     key = settings.FIELD_ENCRYPTION_KEY
     if not key:
-        digest = hashlib.sha256(("tuliwamu-field-key:" + settings.SECRET_KEY).encode()).digest()
-        key = base64.urlsafe_b64encode(digest).decode()
-    return Fernet(key.encode() if isinstance(key, str) else key)
+        key = "tuliwamu-field-key:" + settings.SECRET_KEY
+    try:
+        return Fernet(key.encode() if isinstance(key, str) else key)
+    except ValueError:
+        # Any other secret (e.g. a platform-generated value) is stretched into a valid Fernet key.
+        digest = hashlib.sha256(str(key).encode()).digest()
+        return Fernet(base64.urlsafe_b64encode(digest))
 
 
 def encrypt_value(value):

@@ -30,6 +30,10 @@ if not SECRET_KEY:
         raise RuntimeError("DJANGO_SECRET_KEY must be set when DEBUG is False")
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+# Hosting platforms (e.g. Render) expose the public hostname; trust it automatically.
+EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME") or os.environ.get("PUBLIC_HOSTNAME", "")
+if EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(EXTERNAL_HOSTNAME)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -113,6 +117,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+# Single-service deployment: the built React app (frontend/dist) is served by WhiteNoise at the site
+# root, and every non-API path returns index.html (see config/urls.py).
+FRONTEND_DIST = Path(os.environ.get("FRONTEND_DIST", BASE_DIR.parent / "frontend" / "dist"))
+if FRONTEND_DIST.is_dir():
+    WHITENOISE_ROOT = FRONTEND_DIST
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Cache (rate limits, lockouts, idempotency). Redis in production, memory locally. ---
@@ -168,6 +177,8 @@ BENEFICIARY_REFRESH_HOURS = 2
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "http://localhost:5173")
+if EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{EXTERNAL_HOSTNAME}")
 
 # --- Security headers ---
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -177,6 +188,7 @@ SESSION_COOKIE_HTTPONLY = True
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
+    SECURE_REDIRECT_EXEMPT = [r"^api/health/$"]  # platform health checks use plain HTTP internally
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
@@ -188,7 +200,7 @@ FIELD_ENCRYPTION_KEY = os.environ.get("FIELD_ENCRYPTION_KEY", "")
 # --- Email ---
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@tuliwamu.example")
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+FRONTEND_URL = os.environ.get("FRONTEND_URL") or (f"https://{EXTERNAL_HOSTNAME}" if EXTERNAL_HOSTNAME else "http://localhost:5173")
 
 # --- Africa's Talking ---
 AFRICASTALKING_USERNAME = os.environ.get("AFRICASTALKING_USERNAME", "sandbox")

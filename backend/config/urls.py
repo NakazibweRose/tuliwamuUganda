@@ -1,5 +1,6 @@
-from django.http import JsonResponse
-from django.urls import include, path
+from django.conf import settings
+from django.http import FileResponse, Http404, JsonResponse
+from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
 
 from accounts import views as account_views
@@ -35,6 +36,16 @@ def health(request):
     return JsonResponse({"status": "ok"})
 
 
+def spa(request, *args, **kwargs):
+    """Serve the React app for any non-API path (client-side routing)."""
+    index = settings.FRONTEND_DIST / "index.html"
+    if not index.is_file():
+        raise Http404("Frontend not built")
+    response = FileResponse(open(index, "rb"), content_type="text/html")
+    response["Cache-Control"] = "no-cache"
+    return response
+
+
 urlpatterns = [
     path("api/health/", health),
     path("api/auth/login/", account_views.login),
@@ -61,3 +72,6 @@ urlpatterns = [
     path("api/translations/status/", translation_status),
     path("api/", include(router.urls)),
 ]
+
+# Must stay last: everything that is not /api/... is handled by the React router.
+urlpatterns.append(re_path(r"^(?!api/).*$", spa))

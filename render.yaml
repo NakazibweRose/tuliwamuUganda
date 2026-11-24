@@ -1,4 +1,5 @@
-# Render Blueprint: Django API + managed PostgreSQL. The frontend deploys separately (Vercel/Netlify).
+# Render Blueprint — one Docker web service (React app + Django API) and a managed PostgreSQL database.
+# Deploy: Render dashboard → New → Blueprint → pick this repository and branch.
 databases:
   - name: tuliwamu-db
     plan: free
@@ -7,40 +8,31 @@ databases:
 
 services:
   - type: web
-    name: tuliwamu-api
-    runtime: python
-    rootDir: backend
-    buildCommand: "./build.sh"
-    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60"
+    name: tuliwamu
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health/
     envVars:
       - key: DATABASE_URL
         fromDatabase: { name: tuliwamu-db, property: connectionString }
       - key: DJANGO_SECRET_KEY
         generateValue: true
+      - key: FIELD_ENCRYPTION_KEY
+        generateValue: true   # keep it: encrypted fields cannot be read without it
       - key: DJANGO_DEBUG
         value: "False"
-      - key: DJANGO_ALLOWED_HOSTS
-        value: ".onrender.com"
-      - key: CORS_ALLOWED_ORIGINS
-        sync: false   # e.g. https://tuliwamu.vercel.app
-      - key: CSRF_TRUSTED_ORIGINS
-        sync: false
-      - key: FRONTEND_URL
-        sync: false
-      - key: FIELD_ENCRYPTION_KEY
-        sync: false   # python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+      - key: SEED_DEMO_DATA
+        value: "true"   # loads fictional demo data once, when the database is empty
       - key: REFRESH_COOKIE_SAMESITE
-        value: "None"
+        value: Lax      # frontend and API share one origin
       - key: REFRESH_COOKIE_SECURE
         value: "True"
+      - key: SMS_PROVIDER
+        value: mock     # switch to africastalking after adding AFRICASTALKING_API_KEY
       - key: AFRICASTALKING_USERNAME
         value: sandbox
-      - key: AFRICASTALKING_API_KEY
-        sync: false
       - key: AFRICASTALKING_ENVIRONMENT
         value: sandbox
       - key: AFRICASTALKING_CALLBACK_TOKEN
         generateValue: true
-      - key: PYTHON_VERSION
-        value: "3.12.7"
