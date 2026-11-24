@@ -1,7 +1,7 @@
 # Tuliwamu — child-sensitive justice referral & case coordination (Uganda)
 
 > **Tuliwamu** (Luganda: *“we are here”*) is a working MVP that helps police, health workers, forensic
-> services, the DPP, courts, probation & social welfare officers and support organisations coordinate
+> services, the ODPP, courts, probation & social welfare officers and support organisations coordinate
 > referrals for **children who are victims of crime**. Children and authorised caregivers can follow
 > **reviewed, plain-language** progress, see upcoming hearings and ask for help. Reports can also be made
 > anonymously from any phone over **USSD**.
