@@ -6,6 +6,8 @@
 > **reviewed, plain-language** progress, see upcoming hearings and ask for help. Reports can also be made
 > anonymously from any phone over **USSD**.
 
+**Live demo:** https://tuliwamu.onrender.com — sign in with any demo account below (password `Tuliwamu#Demo2026`). The free hosting plan sleeps when idle, so the first visit can take about a minute to wake up.
+
 **This is a hackathon prototype.** It uses only fictional data. It is **not** an official police, DPP,
 court or health system. It is not legally certified or government-approved, and it does not replace
 professional or judicial decisions.

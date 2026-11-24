@@ -1,5 +1,18 @@
 # Deployment & Africa's Talking configuration
 
+## Current deployment
+
+| Item | Value |
+|---|---|
+| URL | https://tuliwamu.onrender.com |
+| Render service | `tuliwamu` (Docker, free plan, Frankfurt), auto-deploys from branch `claude/nice-brahmagupta-6clvge` |
+| Database | `tuliwamu-db` (Render PostgreSQL 16, free plan, Frankfurt) — **free databases expire after 30 days (24 Dec 2026); upgrade or back up before then** |
+| Demo data | Seeded once on first start (`SEED_DEMO_DATA=true`, `seed_demo --if-empty`). To reset: Render shell → `python manage.py seed_demo --reset` |
+| SMS | Mock provider (`SMS_PROVIDER=mock`): messages show as “Simulated” |
+
+The `Dockerfile` builds the React app and serves it from Django, so the site and API share one address.
+`render.yaml` describes the same setup as a Blueprint, for re-creating it in another account.
+
 Recommended setup: **backend + PostgreSQL on Render**, **frontend on Vercel or Netlify**. Any host with
 Python 3.12, PostgreSQL and HTTPS will work.
 

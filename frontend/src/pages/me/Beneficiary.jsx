@@ -23,7 +23,7 @@ export function JourneyPath({ current }) {
             <span className={`flex h-9 w-9 items-center justify-center rounded-full border-2 ${state === 'done' ? 'border-success bg-success text-white' : state === 'now' ? 'border-teal bg-teal-50 text-teal ring-4 ring-teal/15' : 'border-line bg-white text-muted'}`}>
               {state === 'done' ? <Icon name="check" className="h-4 w-4" /> : <span className="text-sm font-bold">{i + 1}</span>}
             </span>
-            <span className={`mt-1.5 text-[11px] leading-tight sm:text-xs ${state === 'now' ? 'font-bold text-navy' : 'text-muted'}`}>{t(`journey.${step}`)}</span>
+            <span className={`mt-1.5 w-full text-[10px] leading-tight [overflow-wrap:anywhere] [hyphens:auto] sm:text-xs ${state === 'now' ? 'font-bold text-navy' : 'text-muted'}`}>{t(`journey.${step}`)}</span>
             {state === 'now' && <span className="sr-only">{t('ben.youAreHere')}</span>}
           </li>
         )
