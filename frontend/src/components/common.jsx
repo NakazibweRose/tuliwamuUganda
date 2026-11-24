@@ -3,11 +3,11 @@ import { LANGUAGES, useI18n } from '../i18n'
 import { quickExit } from '../auth/AuthContext'
 import { Icon } from './ui'
 
-export function Logo({ light, small }) {
+export function Logo({ light, small, compact }) {
   return (
     <span className="inline-flex items-center gap-2.5">
       <img src="/icon.svg" alt="" className={small ? 'h-8 w-8' : 'h-10 w-10'} />
-      <span className={`font-serif text-xl font-semibold tracking-tight ${light ? 'text-white' : 'text-navy'}`}>Tuliwamu</span>
+      <span className={`font-serif text-xl font-semibold tracking-tight ${compact ? 'hidden min-[430px]:inline' : ''} ${light ? 'text-white' : 'text-navy'}`}>Tuliwamu</span>
     </span>
   )
 }
@@ -54,7 +54,7 @@ export function QuickExitButton({ className = '' }) {
   const { t } = useI18n()
   return (
     <button onClick={quickExit} title={t('common.quickExitHint')}
-      className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-danger px-3 text-sm font-bold text-white shadow hover:bg-danger-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2 ${className}`}>
+      className={`inline-flex min-h-[40px] items-center gap-1.5 whitespace-nowrap rounded-lg bg-danger px-3 text-sm font-bold text-white shadow hover:bg-danger-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2 ${className}`}>
       <Icon name="logout" className="h-4 w-4" /> {t('common.quickExit')}
     </button>
   )

@@ -14,9 +14,9 @@ LANGUAGE_NAMES = {
 REVIEW_STATUS = {
     "en": "source",
     "sw": "draft — needs review by a qualified speaker",
-    "lg": "draft — needs review by a qualified speaker",
+    "lg": "draft (hand draft + Sunbird AI machine translation) — needs review by a qualified speaker",
     "nyn": "partial draft — most text falls back to English",
-    "ach": "partial draft — most text falls back to English",
+    "ach": "partial draft (complainant notifications machine-translated by Sunbird AI) — needs review",
     "teo": "partial draft — most text falls back to English",
 }
 
@@ -166,6 +166,14 @@ SW = {
 }
 
 LG = {
+    # Complainant notifications: Sunbird AI machine translation (reused from the screens) — needs review.
+    "notif.COMPLAINT_RECEIVED.title": "Webale okutubuulira",
+    "notif.COMPLAINT_RECEIVED.body": "Omukungu ajja kukuddamu mu Luganda mu ssaawa 24. Tolina kye weetaaga kukola kati.",
+    "notif.COMPLAINT_NEEDS_INFO.title": "Poliisi erina ekibuuzo ky'eyagala okukubuuza",
+    "notif.COMPLAINT_NEEDS_INFO.body": "Bambi ggyayo alipoota yo ogiremu ofiisa asobole okugenda mu maaso.",
+    "notif.COMPLAINT_REGISTERED.title": "Alipoota yo ekkiriziddwa",
+    "notif.COMPLAINT_REGISTERED.body": "Poliisi etandise omusango era egukola. Webale okwogera ku nsonga eno.",
+    "notif.COMPLAINT_MESSAGE.title": "Obubaka obukwata ku poliisi",
     "notif.CASE_UPDATE.title": "Amawulire amakulu",
     "notif.CASE_UPDATE.body": "Olina amawulire amakulu. Tukusaba otuukirire omukozi akuyamba.",
     "notif.APPOINTMENT_REMINDER.title": "Okujjukiza olunaku",
@@ -188,6 +196,14 @@ NYN = {
 }
 
 ACH = {
+    # Complainant notifications: Sunbird AI machine translation (reused from the screens) — needs review.
+    "notif.COMPLAINT_RECEIVED.title": "Apwoyo pi waciwa",
+    "notif.COMPLAINT_RECEIVED.body": "Latic mo ma tiyo ki Acholi obi gamo lokki i ngee cawa 24. Pe omyero itim gin mo kombedi.",
+    "notif.COMPLAINT_NEEDS_INFO.title": "Abili tye ki lapeny mo pi in",
+    "notif.COMPLAINT_NEEDS_INFO.body": "Tim ber iyab ripot mamegi ci igam lagam wek abili omede anyim.",
+    "notif.COMPLAINT_REGISTERED.title": "Adwoki tic mamegi ki ngiyo",
+    "notif.COMPLAINT_REGISTERED.body": "Abili oyabo lok mo dok gitye ka tic iye. Apwoyo pi lok ma iwaco.",
+    "notif.COMPLAINT_MESSAGE.title": "Kwena ki abili",
     "ussd.welcome": "WAJOLO I TULIWAMU\nYer leb:",
     "ussd.exit": "Apwoyo.",
     "ussd.danger": "Latin tye i peko kombedi?\n1. Eyo\n2. Pe\n3. Pe angeyo",

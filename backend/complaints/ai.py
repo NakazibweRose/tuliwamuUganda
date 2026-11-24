@@ -47,6 +47,8 @@ class SunbirdClient:
                 raise AiUnavailable(f"network:{exc.__class__.__name__}")
             if r.status_code != 429 or attempt == self.retries - 1:  # Sunbird rate limit: back off and retry
                 break
+            if "quota" in r.text.lower():  # daily quota exhausted: retrying now cannot help
+                raise AiUnavailable("daily_quota_exceeded")
             time.sleep(15 * (attempt + 1))
         if r.status_code >= 400:
             raise AiUnavailable(f"http_{r.status_code}")

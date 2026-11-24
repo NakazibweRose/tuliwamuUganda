@@ -24,7 +24,7 @@ export default function BeneficiaryLayout() {
       <header className="sticky top-0 z-20 border-b border-line bg-white">
         <DraftTranslationNotice />
         <div className="mx-auto flex h-16 max-w-3xl items-center gap-2 px-4">
-          <NavLink to="/me"><Logo small /></NavLink>
+          <NavLink to="/me" aria-label="Tuliwamu"><Logo small compact /></NavLink>
           <div className="flex-1" />
           <LanguageSelect compact onChange={(l) => api.patch('/auth/me/', { preferred_language: l }).catch(() => {})} />
           <QuickExitButton />

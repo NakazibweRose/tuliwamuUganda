@@ -32,7 +32,7 @@ sequenceDiagram
 | Translation | `POST /tasks/translate` | Report → English for police; police messages → the complainant's language; complainant replies → English |
 | Triage summary | `POST /tasks/chat/completions` (model `sunflower-9b`) | Returns JSON: category, urgency, summary, key facts. If the model is unavailable, a clearly labelled keyword guess is used |
 
-* **Rate limit:** 50 requests per minute per key. The client backs off and retries. One report uses about 3 calls.
+* **Rate limits:** 50 requests per minute, plus a **daily quota** on the account. The client backs off on the per-minute limit and stops immediately when the daily quota is used up (the report then reaches police without AI). One voice report uses about 3 calls, plus 1 per translated message. **For real use, get a Sunbird plan whose daily quota covers the expected volume.**
 * **Timing:** a voice report took about 80 seconds end to end in testing. Processing runs in the background, so the complainant gets the confirmation immediately.
 * **Failures are safe:** if Sunbird is unavailable, times out, or the complainant did not consent, the report still goes to police (the AI status says why). Officers can listen to or read it directly, and can press **Run AI analysis** later.
 * **Configuration:** set `SUNBIRD_API_KEY` on the server (Render → `tuliwamu` → Environment). Without it, the platform runs with AI switched off.
