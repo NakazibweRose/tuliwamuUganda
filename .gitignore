@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.sqlite3
+backend/staticfiles/
+backend/media/
+.pytest_cache/
+.coverage
+
+# Node
+node_modules/
+frontend/dist/
+*.log
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+e2e/screenshots/
