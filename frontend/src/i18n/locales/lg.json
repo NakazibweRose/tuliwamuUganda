@@ -1,0 +1,82 @@
+{
+ "_meta": {
+  "review_status": "DRAFT — must be reviewed by qualified Luganda speakers before use"
+ },
+ "common": {
+  "loading": "Kitikka…",
+  "retry": "Ddamu ogezeeko",
+  "save": "Tereka",
+  "cancel": "Sazaamu",
+  "close": "Ggalawo",
+  "yes": "Yee",
+  "no": "Nedda",
+  "language": "Olulimi",
+  "quickExit": "Fuluma mangu",
+  "quickExitHint": "Va ku mukutu guno amangu ddala",
+  "draftTranslation": "Okuvvuunula kuno kukyali kwa kugezesa, kulindiridde okukeberebwa abamanyi olulimi. Ebigambo ebimu biri mu Lungereza.",
+  "offline": "Toli ku mukutu. Ebikyusiddwa tebisobola kuterekebwa okutuusa omukutu lwe gukomawo."
+ },
+ "nav": {
+  "signOut": "Fuluma",
+  "settings": "Enteekateeka",
+  "notifications": "Obubaka"
+ },
+ "login": {
+  "title": "Yingira",
+  "username": "Erinnya ly'omukozesa",
+  "password": "Ekigambo eky'ekyama",
+  "submit": "Yingira",
+  "q1": "Omusango gwange gwafunibwa?",
+  "q2": "Omusango gwange guli wa mu nkola?",
+  "q3": "Kiki ekibaddewo okutuusa kati?",
+  "q4": "Waliwo kye nnina okugendako oba okukola?",
+  "q5": "Nnyinza kufuna wa obuyambi?"
+ },
+ "journey": {
+  "REPORTED": "Kyaloopebwa",
+  "SUPPORT": "Obujjanjabi",
+  "INVESTIGATION": "Okunoonyereza",
+  "PROSECUTION": "Okwekenneenya",
+  "COURT": "Kkooti",
+  "CONCLUDED": "Kyaggwa"
+ },
+ "ben": {
+  "nav": {
+   "home": "Awaka",
+   "help": "Funa obuyambi",
+   "support": "Obuyambi",
+   "messages": "Obubaka",
+   "settings": "Obukuumi"
+  },
+  "hello": "Gyebale {name}",
+  "yourCase": "Omusango gwo",
+  "youAreHere": "Wano w'oli",
+  "q": {
+   "where": "Omusango gwange guli wa kati?",
+   "latest": "Amawulire agasembyeyo",
+   "happened": "Kiki ekibaddewo okutuusa kati?",
+   "attend": "Waliwo kye nnina okugendako?",
+   "help": "Nnyinza kufuna wa obuyambi?"
+  },
+  "askHelp": "Saba obuyambi",
+  "seeEverything": "Laba byonna",
+  "emergencyTitle": "Bw'oba oli mu kabi kati",
+  "emergency": "Kuba ku layini y'abaana 116 (bwereere) oba poliisi ku 999 / 112."
+ },
+ "help": {
+  "title": "Saba obuyambi",
+  "send": "Weereza okusaba"
+ },
+ "support": {
+  "title": "Obuyambi obuliwo",
+  "free": "Bwereere"
+ },
+ "languages": {
+  "en": "Olungereza",
+  "sw": "Oluswayiri",
+  "lg": "Luganda",
+  "nyn": "Runyankole",
+  "ach": "Acholi",
+  "teo": "Ateso"
+ }
+}

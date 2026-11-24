@@ -1,0 +1,273 @@
+/**
+ * End-to-end check of the judges' journey (brief §20) through the real UI, API and PostgreSQL.
+ * Prerequisites: backend on :8000 with `seed_demo --reset`, frontend dev server on :5173.
+ * Run:  node e2e/judge-flow.mjs            (screenshots go to e2e/screenshots/)
+ */
+import { createRequire } from 'module'
+import fs from 'fs'
+const require = createRequire(import.meta.url)
+const { chromium } = require('playwright')
+
+const BASE = process.env.E2E_BASE || 'http://127.0.0.1:5173'
+const PASSWORD = 'Tuliwamu#Demo2026'
+const SHOTS = new URL('./screenshots/', import.meta.url).pathname
+fs.mkdirSync(SHOTS, { recursive: true })
+
+const browser = await chromium.launch()
+const ctx = await browser.newContext({ viewport: { width: 1360, height: 900 } })
+const page = await ctx.newPage()
+page.on('pageerror', (e) => console.error('PAGE ERROR', e.message))
+let step = 0
+const shot = async (name) => page.screenshot({ path: `${SHOTS}${String(++step).padStart(2, '0')}-${name}.png`, fullPage: true })
+const ok = (msg) => console.log('  ✓', msg)
+
+async function login(username) {
+  await page.goto(`${BASE}/login`)
+  await page.getByLabel('Username').fill(username)
+  await page.getByLabel('Password').fill(PASSWORD)
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click()
+  await page.waitForURL(/\/(app|me)/)
+  ok(`signed in as ${username}`)
+}
+async function logout() {
+  await page.getByRole('button', { name: 'Sign out' }).first().click()
+  await page.waitForURL(/\/login/)
+}
+async function openCase(ref) {
+  await page.goto(`${BASE}/app/cases`)
+  await page.getByPlaceholder(/Search by reference/).fill(ref)
+  await page.getByRole('link', { name: ref }).click()
+  await page.waitForURL(/\/app\/cases\//)
+}
+
+// 1. Police registers a case
+console.log('1. Police officer registers a case')
+await login('police.officer')
+await shot('police-overview')
+await page.getByRole('link', { name: 'Register case' }).first().click()
+await page.getByLabel('Pseudonym').fill('Demo Child E2E')
+await page.getByLabel('Age range').selectOption('12-14')
+await page.getByLabel('General incident category').selectOption('SEXUAL_ABUSE')
+await page.getByLabel('District').fill('Kampala')
+await page.getByLabel('The child may need immediate protection').check()
+await page.getByLabel('Protection concerns').fill('Fictional: needs a safe place tonight.')
+await page.getByLabel('Medical', { exact: true }).check()
+await shot('register-case-form')
+await page.getByRole('button', { name: 'Register case' }).click()
+await page.waitForURL(/created=1/)
+await page.locator('h1', { hasText: 'TLW-' }).waitFor()
+const ref = (await page.locator('h1').innerText()).trim()
+ok(`case registered: ${ref}`)
+await shot('case-created')
+
+// 2. Police makes a medical referral
+console.log('2. Medical referral')
+await page.getByRole('button', { name: 'Make referral' }).first().click()
+await page.getByLabel('Referral type').selectOption('MEDICAL')
+await page.getByLabel('Receiving institution').selectOption({ label: 'Nakawa Demo Referral Hospital — Kampala' })
+await page.getByLabel('Purpose and what you are asking for').fill('Examination and treatment; child-friendly room please.')
+await shot('referral-form')
+await page.getByRole('button', { name: 'Send referral' }).click()
+await page.getByText('Sent — awaiting acknowledgement').first().waitFor()
+ok('referral sent')
+await logout()
+
+// 3. Medical officer acknowledges and completes
+console.log('3. Medical officer acknowledges and completes')
+await login('medical.officer')
+await page.goto(`${BASE}/app/referrals?direction=incoming`)
+await page.getByRole('row', { name: new RegExp(ref) }).getByRole('link').click()
+await page.getByText('Information shared with you').waitFor()
+await shot('medical-referral-before-ack')
+if (await page.getByText('Protection concerns').count()) throw new Error('Medical officer can see protection concerns!')
+await page.getByRole('button', { name: 'Acknowledge' }).click()
+await page.getByText('Acknowledged', { exact: true }).first().waitFor()
+ok('acknowledged')
+await page.getByRole('button', { name: 'Record completion' }).click()
+await page.getByLabel(/Completion summary/).fill('Examination completed; official medical form issued through the usual channel.')
+await page.getByLabel(/Restricted notes/).fill('Fictional clinical notes kept by hospital only.')
+await page.getByRole('button', { name: 'Confirm' }).click()
+await page.getByText('Completed', { exact: true }).first().waitFor()
+ok('completed')
+await shot('medical-referral-completed')
+await logout()
+
+// 4. Police: approve family message (second officer), request family access, submit to ODPP
+console.log('4. Police supervisor approves family message; officer submits file to ODPP')
+await login('police.supervisor')
+await page.goto(`${BASE}/app/reviews`)
+await page.getByRole('heading', { name: 'Family update reviews' }).waitFor()
+await page.waitForLoadState('networkidle')
+await shot('review-queue')
+let approved = 0
+while (await page.locator('section', { hasText: ref }).count()) {
+  await page.locator('section', { hasText: ref }).first().getByRole('button', { name: 'Approve for family' }).click()
+  await page.waitForTimeout(700)
+  approved += 1
+}
+ok(`${approved} family message(s) approved by a second officer`)
+await logout()
+
+await login('police.officer')
+await openCase(ref)
+await page.getByText('Case summary').waitFor()
+if (await page.getByText('Fictional clinical notes').count()) throw new Error('Police can see medical restricted notes!')
+await page.getByRole('tab', { name: /Family access/ }).click()
+await page.getByRole('button', { name: 'Request access' }).first().click()
+await page.getByLabel('Account username').fill('caregiver.other')
+await page.getByLabel('Relationship').selectOption('GUARDIAN')
+await page.getByLabel(/^Why this is in/).fill('Guardian assessed by probation; not implicated (fictional).')
+await page.getByLabel(/I confirm this person is not implicated/).check()
+await page.getByRole('button', { name: 'Request access' }).last().click()
+await page.getByText('Awaiting second approval').waitFor()
+ok('access requested (pending second-officer approval)')
+await page.getByRole('tab', { name: 'Overview' }).click()
+await page.getByRole('button', { name: 'Change stage' }).click()
+await page.getByLabel('New stage').selectOption('FILE_SUBMITTED_FOR_PROSECUTION')
+await page.getByRole('button', { name: 'Save' }).click()
+await page.getByText('File submitted for prosecution review').first().waitFor()
+await page.getByRole('button', { name: 'Make referral' }).first().click()
+await page.getByLabel('Referral type').selectOption('PROSECUTION')
+await page.getByLabel('Receiving institution').selectOption({ index: 1 })
+await page.getByLabel('Purpose and what you are asking for').fill('Police file submitted for prosecution review (fictional).')
+await page.getByRole('button', { name: 'Send referral' }).click()
+await page.getByText('Prosecution review (ODPP)').first().waitFor()
+ok('file submitted to ODPP')
+await logout()
+
+await login('police.supervisor')
+await openCase(ref)
+await page.getByRole('tab', { name: /Family access/ }).click()
+await page.getByRole('button', { name: 'Approve' }).click()
+await page.getByText('Active', { exact: true }).waitFor()
+ok('access approved by second officer')
+await logout()
+
+// 5. Prosecutor records review milestone and hands off to court
+console.log('5. Prosecutor records milestones')
+await login('prosecutor')
+await page.goto(`${BASE}/app/referrals?direction=incoming`)
+await page.getByRole('row', { name: new RegExp(ref) }).getByRole('link').click()
+await page.getByRole('button', { name: 'Acknowledge' }).click()
+await page.getByText('Acknowledged', { exact: true }).first().waitFor()
+await page.getByRole('link', { name: ref }).click()
+for (const stage of ['PROSECUTION_DECISION_RECORDED', 'COURT_PROCESS_INITIATED']) {
+  await page.getByRole('button', { name: 'Change stage' }).click()
+  await page.getByLabel('New stage').selectOption(stage)
+  await page.getByLabel('Note').fill('Recorded by the prosecutor (fictional).')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await page.waitForTimeout(600)
+}
+await page.getByText('Court process initiated').first().waitFor()
+await page.getByRole('button', { name: 'Make referral' }).first().click()
+await page.getByLabel('Referral type').selectOption('COURT')
+await page.getByLabel('Receiving institution').selectOption({ index: 1 })
+await page.getByLabel('Purpose and what you are asking for').fill('Case committed for hearing; please list (fictional).')
+await page.getByRole('button', { name: 'Send referral' }).click()
+await page.waitForTimeout(800)
+ok('prosecution milestones recorded and court handoff sent')
+await shot('prosecutor-case')
+await logout()
+
+// 6. Court registry schedules a hearing
+console.log('6. Court registry schedules hearing')
+await login('court.registry')
+await page.goto(`${BASE}/app/referrals?direction=incoming`)
+await page.getByRole('row', { name: new RegExp(ref) }).getByRole('link').click()
+await page.getByRole('button', { name: 'Acknowledge' }).click()
+await page.getByText('Acknowledged', { exact: true }).first().waitFor()
+await page.getByRole('link', { name: ref }).click()
+await page.getByRole('button', { name: 'Change stage' }).click()
+await page.getByLabel('New stage').selectOption('COURT_HEARING_SCHEDULED')
+await page.getByRole('button', { name: 'Save' }).click()
+await page.waitForTimeout(600)
+await page.getByRole('button', { name: 'Schedule hearing' }).first().click()
+const d = new Date(Date.now() + 9 * 86400000)
+const pad = (n) => String(n).padStart(2, '0')
+await page.getByLabel('Date and time').fill(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:00`)
+await page.getByLabel('Location (safe to share)').fill('Demo Family & Children Court, Room 1')
+await page.getByLabel('Note for the family').fill('Your support officer will meet you at the gate at 9:30.')
+await page.getByRole('button', { name: 'Save' }).click()
+await page.waitForTimeout(800)
+await page.getByRole('tab', { name: 'Appointments' }).click()
+await page.getByText('Demo Family & Children Court, Room 1').first().waitFor()
+ok('hearing scheduled')
+await page.getByRole('tab', { name: 'Overview' }).click()
+await page.getByRole('button', { name: 'Add update' }).click()
+await page.getByLabel('Update for the case team').fill('Hearing listed (fictional).')
+await page.getByLabel('Also propose a message for the family').check()
+await page.getByLabel('Message for the child / caregiver').fill('A court appearance has been scheduled. Your support officer will explain what to expect.')
+await page.getByLabel("Step in the family's journey").selectOption('COURT')
+await page.getByRole('button', { name: 'Save' }).click()
+await page.waitForTimeout(800)
+await shot('court-case')
+await logout()
+
+await login('police.officer')
+await page.goto(`${BASE}/app/reviews`)
+await page.getByRole('heading', { name: 'Family update reviews' }).waitFor()
+await page.waitForLoadState('networkidle')
+await page.locator('section', { hasText: 'court appearance' }).first().getByRole('button', { name: 'Approve for family' }).click()
+await page.waitForTimeout(800)
+ok('court message approved')
+await logout()
+
+// 7. Caregiver sees simplified timeline and hearing
+console.log('7. Authorised caregiver views progress')
+await login('caregiver.other')
+await page.getByText(ref).first().waitFor()
+await page.getByText('Demo Family & Children Court, Room 1').first().waitFor()
+await shot('caregiver-home')
+await page.getByRole('link', { name: 'See everything' }).first().click()
+await page.getByText('A medical appointment that was arranged for you has been completed.').waitFor()
+for (const forbidden of ['Fictional clinical notes', 'needs a safe place', 'SEXUAL', 'Sexual abuse', 'Examination completed']) {
+  if (await page.getByText(forbidden).count()) throw new Error(`Caregiver portal shows confidential text: ${forbidden}`)
+}
+ok('simplified timeline and hearing visible; no confidential content')
+await shot('caregiver-case')
+await page.getByRole('link', { name: 'Ask for help' }).first().click()
+await page.getByText('Please call me back').click()
+await page.getByLabel(/Best time to contact/).fill('After 4pm')
+await page.getByRole('button', { name: 'Send request' }).click()
+await page.getByText('Request sent').waitFor()
+ok('assistance requested')
+await logout()
+
+// 8. Admin views anonymised analytics; cannot open case
+console.log('8. Administrator views anonymised analytics')
+await login('admin')
+await page.goto(`${BASE}/app/analytics`)
+await page.getByText('Cases by general category').waitFor()
+await shot('admin-analytics')
+const body = await page.locator('main').innerText()
+if (body.includes(ref) || body.includes('Demo Child')) throw new Error('Analytics leaks case identifiers')
+ok('analytics shown without identifiers')
+
+// 9. USSD simulator
+console.log('9. USSD simulator')
+await page.goto(`${BASE}/app/ussd-simulator`)
+await page.getByText('WELCOME TO TULIWAMU').waitFor()
+for (const input of ['2', '1', '2', '1', 'Mukono', 'Children working in a quarry', '1', '1', '1']) {
+  await page.getByLabel('Your reply').fill(input)
+  await page.getByRole('button', { name: 'Send', exact: true }).click()
+  await page.waitForTimeout(250)
+}
+await page.getByText(/Kumb: AR-|Ref: AR-/).waitFor()
+await shot('ussd-simulator')
+ok('USSD report submitted in Kiswahili via simulator')
+await logout()
+
+// Mobile beneficiary screenshot
+const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })
+const m = await mobile.newPage()
+await m.goto(`${BASE}/login`)
+await m.getByLabel('Username').fill('child.demo')
+await m.getByLabel('Password').fill(PASSWORD)
+await m.getByRole('button', { name: 'Sign in', exact: true }).click()
+await m.waitForURL(/\/me/)
+await m.getByText('Where is my case now?').first().waitFor()
+await m.screenshot({ path: `${SHOTS}${String(++step).padStart(2, '0')}-child-mobile.png`, fullPage: true })
+ok('child portal on a phone-sized screen')
+
+await browser.close()
+console.log('\nAll judge-flow steps passed.')

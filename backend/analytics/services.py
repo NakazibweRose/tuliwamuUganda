@@ -112,11 +112,11 @@ def referral_analytics():
     for row in by_category:
         reasons = []
         if row["awaiting_acknowledgement"]["value"] and row["total"]["value"] and row["awaiting_acknowledgement"]["value"] / row["total"]["value"] >= 0.3:
-            reasons.append("Many referrals still awaiting acknowledgement")
+            reasons.append("AWAITING_ACK")
         if row["completion_rate"]["value"] is not None and row["completion_rate"]["value"] < 40:
-            reasons.append("Low completion rate")
+            reasons.append("LOW_COMPLETION")
         if row["declined"]["value"]:
-            reasons.append("Referrals being declined")
+            reasons.append("DECLINED")
         if reasons:
             gaps.append({"category": row["key"], "label": row["label"], "reasons": reasons})
     monthly = list(

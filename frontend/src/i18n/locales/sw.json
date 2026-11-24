@@ -1,0 +1,178 @@
+{
+ "_meta": {
+  "review_status": "DRAFT — machine-assisted; must be reviewed by qualified Kiswahili speakers before use"
+ },
+ "common": {
+  "loading": "Inapakia…",
+  "retry": "Jaribu tena",
+  "save": "Hifadhi",
+  "cancel": "Ghairi",
+  "confirm": "Thibitisha",
+  "close": "Funga",
+  "edit": "Hariri",
+  "choose": "Chagua…",
+  "search": "Tafuta",
+  "all": "Yote",
+  "yes": "Ndiyo",
+  "no": "Hapana",
+  "next": "Inayofuata",
+  "previous": "Iliyotangulia",
+  "viewAll": "Ona yote",
+  "language": "Lugha",
+  "backToLogin": "Rudi kuingia",
+  "offline": "Huna mtandao. Mabadiliko hayawezi kuhifadhiwa hadi mtandao urudi.",
+  "quickExit": "Toka haraka",
+  "quickExitHint": "Ondoka kwenye tovuti hii mara moja na utoke",
+  "draftTranslation": "Tafsiri hii ni rasimu inayosubiri kukaguliwa na wazungumzaji wenye ujuzi. Baadhi ya maandishi yako kwa Kiingereza.",
+  "disclaimer": "Tuliwamu ni mfano wa hackathon unaotumia data ya kubuni tu. Si mfumo rasmi wa polisi, ODPP, mahakama au afya."
+ },
+ "errors": {
+  "network": "Tatizo la mtandao. Angalia muunganisho wako na ujaribu tena.",
+  "generic": "Kuna hitilafu. Tafadhali jaribu tena.",
+  "notFound": "Haikupatikana, au huna ruhusa ya kuiona.",
+  "forbidden": "Huna ruhusa ya kufanya hivi."
+ },
+ "validation": {
+  "required": "Sehemu hii inahitajika."
+ },
+ "nav": {
+  "overview": "Muhtasari",
+  "cases": "Kesi",
+  "referrals": "Rufaa",
+  "appointments": "Miadi na vikao",
+  "followUps": "Ufuatiliaji",
+  "notifications": "Taarifa",
+  "settings": "Mipangilio",
+  "signOut": "Toka",
+  "analytics": "Takwimu zisizo na majina",
+  "users": "Watumiaji",
+  "institutions": "Taasisi"
+ },
+ "login": {
+  "title": "Ingia",
+  "subtitle": "Tumia akaunti uliyopewa na taasisi yako au afisa wako wa msaada.",
+  "username": "Jina la mtumiaji",
+  "password": "Nenosiri",
+  "submit": "Ingia",
+  "forgot": "Umesahau nenosiri?",
+  "safeguarding": "Ulinzi na faragha",
+  "q1": "Je, kesi yangu imepokelewa?",
+  "q2": "Kesi yangu iko wapi katika mchakato?",
+  "q3": "Nini kimetokea hadi sasa?",
+  "q4": "Je, kuna kitu ninachohitaji kuhudhuria au kufanya?",
+  "q5": "Ninaweza kupata msaada wapi?",
+  "notice": {
+   "sessionExpired": "Kipindi chako kimeisha. Tafadhali ingia tena.",
+   "idleLogout": "Umetolewa baada ya muda bila shughuli ili kulinda taarifa zako."
+  }
+ },
+ "journey": {
+  "REPORTED": "Imeripotiwa",
+  "SUPPORT": "Huduma",
+  "INVESTIGATION": "Uchunguzi",
+  "PROSECUTION": "Mapitio",
+  "COURT": "Mahakama",
+  "CONCLUDED": "Imekamilika"
+ },
+ "ben": {
+  "nav": {
+   "home": "Nyumbani",
+   "help": "Pata msaada",
+   "support": "Huduma",
+   "messages": "Ujumbe",
+   "settings": "Usalama"
+  },
+  "hello": "Habari {name}",
+  "intro": "Hapa unaweza kufuatilia maendeleo ya kesi yako kwa maneno rahisi. Taarifa zilizokaguliwa na afisa wako wa msaada pekee ndizo zinazoonyeshwa.",
+  "yourCase": "Kesi yako",
+  "youAreHere": "Uko hapa",
+  "q": {
+   "where": "Kesi yangu iko wapi sasa?",
+   "latest": "Habari za karibuni",
+   "happened": "Nini kimetokea hadi sasa?",
+   "attend": "Je, kuna kitu ninachohitaji kuhudhuria?",
+   "help": "Ninaweza kupata msaada wapi?"
+  },
+  "officer": "Afisa wako wa msaada ni {name} katika {institution}.",
+  "seeEverything": "Ona kila kitu",
+  "askHelp": "Omba msaada",
+  "noCases": "Hakuna cha kuonyesha bado",
+  "noCasesHint": "Afisa wako wa msaada atakuambia utakapoweza kufuatilia kesi hapa.",
+  "today": "Leo au hivi karibuni",
+  "inDays": "Baada ya siku {n}",
+  "dateChanged": "Tarehe imebadilika",
+  "timelineHint": "Ujumbe huu umekaguliwa na afisa wako wa msaada.",
+  "noUpdates": "Hakuna taarifa bado.",
+  "noAppointments": "Hakuna cha kuhudhuria kwa sasa.",
+  "connected": "Msaada uliopangwa kwa ajili yako",
+  "emergencyTitle": "Ukiwa hatarini sasa",
+  "emergency": "Piga Simu ya Msaada kwa Watoto 116 (bure) au polisi 999 / 112.",
+  "safetyTitle": "Kuwa salama kwenye simu hii",
+  "tip1": "Tumia “Toka haraka” kuondoka kwenye ukurasa mara moja.",
+  "tip2": "Daima toka ukimaliza, hasa kwenye simu ya kushirikiana.",
+  "tip3": "Utatolewa moja kwa moja baada ya dakika 10 bila shughuli.",
+  "tip4": "Ujumbe kutoka Tuliwamu hausemi kesi yako inahusu nini."
+ },
+ "help": {
+  "title": "Omba msaada",
+  "intro": "Ombi lako litaenda kwa afisa wako wa msaada. Watajibu hapa au watawasiliana nawe kwa usalama.",
+  "what": "Unahitaji nini?",
+  "message": "Tueleze zaidi (si lazima)",
+  "messageHint": "Huhitaji kuandika maelezo ya kilichotokea.",
+  "when": "Wakati mzuri wa kuwasiliana nawe (si lazima)",
+  "send": "Tuma ombi",
+  "sentTitle": "Ombi limetumwa",
+  "sent": "Afisa wako wa msaada amejulishwa. Utaona jibu lao hapa chini.",
+  "myRequests": "Maombi yako",
+  "none": "Hakuna maombi bado.",
+  "reply": "Jibu"
+ },
+ "assistanceType": {
+  "CALL_BACK": "Tafadhali nipigie",
+  "QUESTION": "Nina swali kuhusu kesi yangu",
+  "APPOINTMENT_HELP": "Msaada wa kuhudhuria miadi",
+  "SAFETY_CONCERN": "Sijisikii salama",
+  "SUPPORT_SERVICE": "Nahitaji huduma ya msaada",
+  "OTHER": "Kitu kingine"
+ },
+ "assistanceStatus": {
+  "OPEN": "Limepokelewa",
+  "IN_PROGRESS": "Linashughulikiwa",
+  "RESOLVED": "Limejibiwa",
+  "CLOSED": "Limefungwa"
+ },
+ "support": {
+  "title": "Huduma za msaada",
+  "intro": "Huduma za bure na za siri zinazoweza kukusaidia wewe na familia yako.",
+  "free": "Bure"
+ },
+ "benAppointment": {
+  "COURT_HEARING": "Kufika mahakamani",
+  "MEDICAL": "Ziara ya afya",
+  "COUNSELLING": "Kikao cha ushauri",
+  "LEGAL_AID": "Mkutano na msaidizi wa sheria",
+  "FOLLOW_UP": "Ziara ya afisa wako wa msaada",
+  "OTHER": "Miadi"
+ },
+ "benServiceStatus": {
+  "ARRANGED": "Imepangwa",
+  "COMPLETED": "Imekamilika"
+ },
+ "settings": {
+  "title": "Mipangilio",
+  "languageTitle": "Lugha"
+ },
+ "notifications": {
+  "title": "Taarifa",
+  "empty": "Hakuna taarifa.",
+  "markAll": "Weka zote zimesomwa"
+ },
+ "languages": {
+  "en": "Kiingereza",
+  "sw": "Kiswahili",
+  "lg": "Luganda",
+  "nyn": "Runyankole",
+  "ach": "Acholi",
+  "teo": "Ateso"
+ }
+}

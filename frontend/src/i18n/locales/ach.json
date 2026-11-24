@@ -1,0 +1,13 @@
+{
+ "_meta": {
+  "review_status": "PARTIAL DRAFT — only a few words translated; must be completed and reviewed by qualified speakers"
+ },
+ "common": {
+  "yes": "Eyo",
+  "no": "Pe",
+  "draftTranslation": "The Acholi translation is incomplete and awaiting review by qualified speakers. Most text appears in English."
+ },
+ "languages": {
+  "ach": "Acholi"
+ }
+}
