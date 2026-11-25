@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api, describeError } from '../../api/client'
@@ -127,11 +127,22 @@ export function ReferralModal({ c, open, onClose, onDone }) {
   const { t } = useI18n()
   const opts = useApi(open ? '/referrals/options/' : null)
   const [error, setError] = useState(null)
-  const defaults = { attach_category: 'POLICE_FILE', category: c.referral_needs?.[0] || 'MEDICAL', priority: c.immediate_risk ? 'URGENT' : 'ROUTINE', shared_fields: ['age_range', 'preferred_language', 'incident_category'], visible_to_beneficiary: true }
-  const { register, handleSubmit, watch, formState: { isSubmitting, errors } } = useForm({ defaultValues: defaults })
+  const { user: me } = useAuth()
+  const defaults = { attach_category: { PROSECUTOR: 'PROSECUTION_DOCUMENT', MEDICAL: 'MEDICAL_REPORT', PROBATION: 'WELFARE_REPORT', LEGAL_AID: 'LEGAL_DOCUMENT' }[me.role] || 'POLICE_FILE', category: c.referral_needs?.[0] || 'MEDICAL', priority: c.immediate_risk ? 'URGENT' : 'ROUTINE', shared_fields: ['age_range', 'preferred_language', 'incident_category'], visible_to_beneficiary: true }
+  const { register, handleSubmit, watch, setValue, formState: { isSubmitting, errors } } = useForm({ defaultValues: defaults })
   const category = watch('category')
   const [attachFile, setAttachFile] = useState(null)
-  const receivers = opts.data?.receivers?.[category] || []
+  const available = (cat) => (opts.data?.receivers?.[cat] || []).length > 0
+  // Institutions in the case's own district first, then the rest alphabetically.
+  const receivers = [...(opts.data?.receivers?.[category] || [])].sort((a, b) =>
+    (b.district === c.district) - (a.district === c.district) || a.name.localeCompare(b.name))
+  useEffect(() => {
+    // If the suggested type has no receiving institution (e.g. your own type), switch to the first usable one.
+    if (opts.data && !available(category)) {
+      const first = REFERRAL_CATEGORIES.find((x) => available(x))
+      if (first) setValue('category', first)
+    }
+  }, [opts.data]) // eslint-disable-line react-hooks/exhaustive-deps
   const sensitive = ['protection_concerns', 'location_detail']
   const submit = async (v) => {
     setError(null)
@@ -152,13 +163,13 @@ export function ReferralModal({ c, open, onClose, onDone }) {
         <form onSubmit={handleSubmit(submit)} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={t('referralNew.category')} required>{(a) => <Select {...a} {...register('category')}>
-              {REFERRAL_CATEGORIES.map((x) => <option key={x} value={x}>{t(`referralCategory.${x}`)}</option>)}</Select>}</Field>
+              {REFERRAL_CATEGORIES.map((x) => <option key={x} value={x} disabled={!available(x)}>{t(`referralCategory.${x}`)}{available(x) ? '' : ` — ${t('referralNew.noneAvailable')}`}</option>)}</Select>}</Field>
             <Field label={t('referralNew.priority')}>{(a) => <Select {...a} {...register('priority')}>
               {['ROUTINE', 'URGENT', 'EMERGENCY'].map((x) => <option key={x} value={x}>{t(`priority.${x}`)}</option>)}</Select>}</Field>
           </div>
-          <Field label={t('referralNew.receiver')} required error={(errors.receiving_institution_id && t('validation.required')) || error?.fields?.receiving_institution_id}>
+          <Field label={t('referralNew.receiver')} hint={category === 'COURT' ? t('referralNew.courtHint') : undefined} required error={(errors.receiving_institution_id && t('validation.required')) || error?.fields?.receiving_institution_id}>
             {(a) => <Select {...a} {...register('receiving_institution_id', { required: true })}>
-              <option value="">{receivers.length ? t('common.choose') : t('referralNew.noReceivers')}</option>
+              <option value="">{receivers.length ? t('referralNew.chooseCount', { n: receivers.length }) : t('referralNew.noReceivers')}</option>
               {receivers.map((r) => <option key={r.id} value={r.id}>{r.name} — {r.district}</option>)}</Select>}
           </Field>
           <Field label={t('referralNew.purpose')} hint={t('referralNew.purposeHint')} required error={errors.purpose && t('validation.required')}>
@@ -176,7 +187,7 @@ export function ReferralModal({ c, open, onClose, onDone }) {
           <fieldset className="rounded-xl border border-line p-4">
             <legend className="px-1 text-sm font-semibold text-ink">{t('docs.sendWithReferral')}</legend>
             <p className="mb-3 text-xs text-muted">{t('docs.sendWithReferralHint')}</p>
-            <div className="grid gap-3 sm:grid-cols-[14rem_1fr]">
+            <div className="grid items-start gap-3 sm:grid-cols-[14rem_1fr]">
               <Select aria-label={t('docs.type')} {...register('attach_category')}>{DOC_CATEGORIES.map((x) => <option key={x} value={x}>{t(`docCategory.${x}`)}</option>)}</Select>
               <FilePicker id="referral-attach" file={attachFile} onChange={setAttachFile} />
             </div>

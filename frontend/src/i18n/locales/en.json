@@ -284,7 +284,7 @@
   "category": "Referral type",
   "priority": "Priority",
   "receiver": "Receiving institution",
-  "noReceivers": "No institution receives this type",
+  "noReceivers": "No other institution receives this type of referral",
   "purpose": "Purpose and what you are asking for",
   "purposeHint": "Be specific. Do not include details that are not needed for this service.",
   "shareTitle": "Information to share",
@@ -292,7 +292,10 @@
   "sensitiveField": "Sensitive — share only if essential",
   "visibleToFamily": "Tell the family that this service has been arranged",
   "visibleToFamilyHint": "Shows only the type of service, after an officer approves the message.",
-  "send": "Send referral"
+  "send": "Send referral",
+  "noneAvailable": "not available",
+  "chooseCount": "Choose one of {n}…",
+  "courtHint": "Choose the court that will hear the case — courts in the case district are listed first. The court registry receives the referral and schedules the hearing."
  },
  "referralDetail": {
   "ackTitle": "Please acknowledge this referral",

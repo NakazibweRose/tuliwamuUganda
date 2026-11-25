@@ -26,6 +26,26 @@ class Command(BaseCommand):
             old.username, old.role, old.full_name = "complainant.demo", "COMPLAINANT", "Demo Complainant"
             old.save(update_fields=["username", "role", "full_name"])
             self.stdout.write("Renamed child.demo -> complainant.demo")
+        # Add any institutions / staff accounts introduced since this database was seeded (idempotent).
+        from core.management.commands.seed_demo import Command as Seed
+
+        seed = Seed()
+        before = Institution.objects.count()
+        seed.inst = seed.create_institutions()
+        added = Institution.objects.count() - before
+        from core.management.commands.seed_demo import USERS
+        from institutions.models import InstitutionMembership
+
+        new_staff = 0
+        for username, name, role, inst_key, title, sup in USERS:
+            if User.objects.filter(username=username).exists():
+                continue  # never touch existing accounts or their settings
+            u = seed._user(username, name, role)
+            InstitutionMembership.objects.update_or_create(user=u, institution=seed.inst[inst_key],
+                                                           defaults=dict(title=title, is_supervisor=sup, is_active=True))
+            new_staff += 1
+        if added or new_staff:
+            self.stdout.write(f"Added {added} institution(s) and {new_staff} staff account(s)")
         if not User.objects.filter(username="complainant.two").exists():
             from core.management.commands.seed_demo import DEMO_PASSWORD, Command as Seed
 

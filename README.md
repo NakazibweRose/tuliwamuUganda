@@ -92,6 +92,8 @@ The login page also has a one-click account picker.
 | `forensic.officer` | Forensic analyst | Demo Forensic Services Unit |
 | `prosecutor` | ODPP state attorney (supervisor) | ODPP Demonstration Office |
 | `court.registry` | Court registry clerk | Demo Family & Children Court Registry |
+| `court.magistrate`, `court.highcourt` | Court registry clerks | Demo Chief Magistrate's Court – Kampala / Demo High Court (Criminal Division) – Kampala |
+| `court.gulu`, `court.mbarara`, `court.soroti` | Court registry clerks | Demo High Court Circuit – Gulu / Demo Chief Magistrate's Courts – Mbarara, Soroti |
 | `probation.officer` | Probation & social welfare (supervisor) | Kampala Demo Probation Office |
 | `legalaid.officer`, `support.counsellor` | Legal aid / psychosocial support | Demo Legal Aid Clinic / Psychosocial Centre |
 | `caregiver.demo` | Caregiver (SMS preference on, Luganda) — sees a case only after an officer grants access | — |

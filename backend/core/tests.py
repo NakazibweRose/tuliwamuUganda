@@ -28,3 +28,28 @@ class CleanSeedTests(TestCase):
         police = User.objects.get(username="police.officer")
         call_command("seed_demo", "--reset-id", "r1", verbosity=0)
         self.assertTrue(User.objects.filter(pk=police.pk).exists())
+
+
+class CourtOptionsTests(TestCase):
+    def test_several_courts_available_for_hearings(self):
+        from rest_framework.test import APIClient
+
+        call_command("seed_demo", verbosity=0)
+        c = APIClient()
+        c.force_authenticate(User.objects.get(username="prosecutor"))
+        data = c.get("/api/referrals/options/").data
+        self.assertGreaterEqual(len(data["receivers"]["COURT"]), 5)
+        self.assertEqual(data["receivers"]["PROSECUTION"], [])  # never your own institution
+        for clerk in ("court.registry", "court.magistrate", "court.highcourt", "court.gulu", "court.mbarara", "court.soroti"):
+            self.assertEqual(User.objects.get(username=clerk).institution.type, "COURT")
+
+    def test_upgrade_adds_new_courts_without_touching_existing_accounts(self):
+        call_command("seed_demo", verbosity=0)
+        User.objects.filter(username="court.gulu").delete()
+        Institution.objects.filter(name="Demo High Court Circuit – Gulu").delete()
+        police = User.objects.get(username="police.officer")
+        police.full_name = "Changed by the team"
+        police.save()
+        call_command("upgrade_demo", verbosity=0)
+        self.assertTrue(User.objects.filter(username="court.gulu").exists())
+        self.assertEqual(User.objects.get(username="police.officer").full_name, "Changed by the team")

@@ -161,7 +161,7 @@ for (const stage of ['PROSECUTION_DECISION_RECORDED', 'COURT_PROCESS_INITIATED']
 await page.getByText('Court process initiated').first().waitFor()
 await page.getByRole('button', { name: 'Make referral' }).first().click()
 await page.getByLabel('Referral type').selectOption('COURT')
-await page.getByLabel('Receiving institution').selectOption({ index: 1 })
+await page.getByLabel('Receiving institution').selectOption({ label: 'Demo Family & Children Court Registry — Kampala' })
 await page.getByLabel('Purpose and what you are asking for').fill('Case committed for hearing; please list (fictional).')
 await page.getByRole('button', { name: 'Send referral' }).click()
 await page.waitForTimeout(800)
