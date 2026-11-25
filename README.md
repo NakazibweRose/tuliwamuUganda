@@ -102,6 +102,8 @@ The login page also has a one-click account picker.
 | `caregiver.other` | Caregiver (use to show caregivers see nothing until access is granted) | — |
 | `admin` | System administrator (no case access) | — |
 
+**Clearing activity:** `python manage.py clear_activity --yes` removes all cases, referrals, reports, documents, messages, notifications and the audit trail but keeps every account, password, institution and support service. On the live site, set a new value for `CLEAR_ACTIVITY_ID` on Render to do this once.
+
 **Clean start:** the demo contains only institutions, accounts and the support-services directory — no cases, referrals, reports or messages — so every journey starts from scratch. Run `python manage.py seed_demo --reset --sample-data` locally if you want busy dashboards with fictional sample cases. On the live site, changing the `DEMO_RESET_ID` environment variable on Render wipes all demo activity once and starts clean again (accounts kept). The judge
 walkthrough is in [`docs/07-demo-script-and-pitch.md`](docs/07-demo-script-and-pitch.md).
 

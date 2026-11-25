@@ -53,3 +53,30 @@ class CourtOptionsTests(TestCase):
         call_command("upgrade_demo", verbosity=0)
         self.assertTrue(User.objects.filter(username="court.gulu").exists())
         self.assertEqual(User.objects.get(username="police.officer").full_name, "Changed by the team")
+
+
+class ClearActivityTests(TestCase):
+    def test_clears_activity_but_keeps_accounts_and_passwords(self):
+        from django.contrib.auth import authenticate
+
+        from support_services.models import SupportService
+
+        call_command("seed_demo", "--sample-data", "--background", "3", verbosity=0)
+        police = User.objects.get(username="police.officer")
+        police.full_name = "Name the team entered"
+        police.save()
+        users, insts, services = User.objects.count(), Institution.objects.count(), SupportService.objects.count()
+        call_command("clear_activity", "--once-id", "c1", verbosity=0)
+        for model in (ChildCase, Referral, AnonymousReport, Complaint, Notification):
+            self.assertEqual(model.objects.count(), 0, model.__name__)
+        self.assertEqual((User.objects.count(), Institution.objects.count(), SupportService.objects.count()), (users, insts, services))
+        self.assertEqual(User.objects.get(username="police.officer").full_name, "Name the team entered")
+        self.assertIsNotNone(authenticate(username="police.officer", password="Tuliwamu#Demo2026"))
+        # Same ID again does nothing (safe on every restart).
+        call_command("clear_activity", "--once-id", "c1", verbosity=0)
+
+    def test_requires_confirmation(self):
+        from django.core.management.base import CommandError
+
+        with self.assertRaises(CommandError):
+            call_command("clear_activity", verbosity=0)
