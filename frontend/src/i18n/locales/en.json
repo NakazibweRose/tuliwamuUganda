@@ -199,7 +199,8 @@
    "referrals": "Referrals",
    "appointments": "Appointments",
    "followUps": "Follow-ups",
-   "family": "Family access"
+   "family": "Family access",
+   "documents": "Documents"
   },
   "changeStage": "Change stage",
   "addUpdate": "Add update",
@@ -675,7 +676,8 @@
   "COMPLAINT_REGISTERED": "Report verified",
   "NEW_COMPLAINT": "New report to verify",
   "COMPLAINT_REPLY": "Complainant replied",
-  "COMPLAINT_OVERDUE": "Report overdue"
+  "COMPLAINT_OVERDUE": "Report overdue",
+  "DOCUMENT_SHARED": "Document shared"
  },
  "analytics": {
   "title": "Anonymised analytics",
@@ -1157,5 +1159,53 @@
  "ussdCard": {
   "title": "No smartphone? Report from any phone",
   "body": "Dial the Tuliwamu USSD code to report anonymously. Try how it works with the simulator."
+ },
+ "docCategory": {
+  "MEDICAL_REPORT": "Medical report",
+  "MEDICAL_FORM": "Medical examination form (e.g. PF3)",
+  "FORENSIC_REPORT": "Forensic report",
+  "POLICE_FILE": "Police case file",
+  "STATEMENT": "Statement",
+  "PROSECUTION_DOCUMENT": "Prosecution document",
+  "COURT_DOCUMENT": "Court document",
+  "WELFARE_REPORT": "Social welfare / probation report",
+  "LEGAL_DOCUMENT": "Legal aid document",
+  "OTHER": "Other document"
+ },
+ "docs": {
+  "referralTitle": "Documents",
+  "referralSubtitle": "Files on this referral are shared only between your institution and {other}.",
+  "caseSubtitle": "Every document your institution may see for this case. Nobody else on the case can see a document unless it was sent to them.",
+  "empty": "No documents yet",
+  "emptyHint": "Upload a file, or wait for the other institution to send one.",
+  "chooseFile": "Choose a file (PDF, photo or Word)",
+  "allowed": "PDF, JPG, PNG, WEBP or Word (.docx), up to 10 MB. Files are encrypted when stored.",
+  "tooLarge": "This file is larger than 10 MB.",
+  "type": "Document type",
+  "title": "Title (optional)",
+  "titlePlaceholder": "e.g. Medical report — 24 Nov",
+  "forwardable": "Allow recipients to forward this document",
+  "forwardableHint": "For example, police forwarding a medical report to the ODPP. Untick for documents that must stay with the recipient only.",
+  "whoSeesReferral": "Only your institution and {other} will be able to open this file.",
+  "whoSeesCase": "Only your institution will be able to open this file until you forward it.",
+  "upload": "Upload",
+  "addDocument": "Add a document",
+  "download": "Download",
+  "forward": "Forward",
+  "withdraw": "Withdraw",
+  "withdrawPrompt": "Why are you withdrawing this document? (The file will be deleted; the record stays in the audit log.)",
+  "from": "From {institution} ({name})",
+  "onReferral": "via {ref}",
+  "sharedWith": "Shared with: {list}",
+  "notShared": "Not shared with anyone else",
+  "noForward": "Do not forward",
+  "forwardTitle": "Forward document",
+  "forwardTo": "Send to",
+  "forwardWarning": "Only forward what the receiving institution needs for its role. Forwarding is recorded in the audit log.",
+  "noTargets": "There is no other institution on this case to forward to.",
+  "attachReport": "Attach the report (optional)",
+  "attachReportHint": "The file is shared only with {other}. Clinical details stay out of the family portal.",
+  "sendWithReferral": "Send a document with this referral (optional)",
+  "sendWithReferralHint": "For example the police case file to the ODPP. Only the receiving institution will be able to open it."
  }
 }

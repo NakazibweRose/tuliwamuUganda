@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api, describeError } from '../../api/client'
 import { Alert, Badge, Button, Card, CardHeader, Detail, EmptyState, ErrorState, Field, Icon, Loading, Modal, PageHeader, PriorityBadge, Select, StatusBadge, Table, Tabs, Textarea } from '../../components/ui'
+import DocumentsPanel, { FilePicker, defaultCategory, uploadDocument } from '../../components/Documents'
 import { useApi } from '../../hooks/useApi'
 import { useI18n } from '../../i18n'
 import { fmtDate, fmtDateTime } from '../../lib/format'
@@ -62,13 +63,22 @@ export function ReferralDetail() {
   const [form, setForm] = useState({ note: '', outcome_summary: '', restricted_notes: '' })
   const [actErr, setActErr] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [completeFile, setCompleteFile] = useState(null)
+  const [docsKey, setDocsKey] = useState(0)
 
   if (loading) return <Loading />
   if (error) return <ErrorState error={error} onRetry={reload} />
 
   const run = async (action, body = {}) => {
     setBusy(true); setActErr(null)
-    try { await api.post(`/referrals/${r.id}/${action}/`, body); setPending(null); setForm({ note: '', outcome_summary: '', restricted_notes: '' }); reload() }
+    try {
+      if (action === 'complete' && completeFile) {
+        // The report itself travels as a file, shared only with the referring institution.
+        await uploadDocument({ file: completeFile, category: defaultCategory(r), title: '', referralId: r.id })
+        setCompleteFile(null); setDocsKey((k) => k + 1)
+      }
+      await api.post(`/referrals/${r.id}/${action}/`, body); setPending(null); setForm({ note: '', outcome_summary: '', restricted_notes: '' }); reload()
+    }
     catch (e) { setActErr(describeError(e, t)) } finally { setBusy(false) }
   }
   const click = (a) => (NEEDS_NOTE.includes(a) || a === 'complete' ? setPending(a) : run(a))
@@ -117,6 +127,12 @@ export function ReferralDetail() {
               </div>
             </Card>
           )}
+          {!['DRAFT', 'CANCELLED'].includes(r.status) && (
+            <Card>
+              <CardHeader title={t('docs.referralTitle')} subtitle={t('docs.referralSubtitle', { other: isReceiver ? r.sending_institution.name : r.receiving_institution.name })} />
+              <div className="p-5"><DocumentsPanel key={docsKey} caseId={r.case_id} referral={r} /></div>
+            </Card>
+          )}
         </div>
         <div className="space-y-6">
           <Card>
@@ -154,6 +170,9 @@ export function ReferralDetail() {
             </Field>
             <Field label={t('referralDetail.restrictedNotes')} hint={t('referralDetail.restrictedNotesHint')}>
               {(a) => <Textarea {...a} value={form.restricted_notes} onChange={(e) => setForm({ ...form, restricted_notes: e.target.value })} />}
+            </Field>
+            <Field label={t('docs.attachReport')} hint={t('docs.attachReportHint', { other: r.sending_institution.name })}>
+              {(a) => <FilePicker id={a.id} file={completeFile} onChange={setCompleteFile} />}
             </Field>
             <Alert tone="bronze">{t('referralDetail.completeFamilyNote')}</Alert>
           </>

@@ -23,6 +23,20 @@ points to where it is enforced in code and which test checks it.
 | Stage authority | `CaseStage.allowed_roles`; e.g. only prosecutors record a prosecution decision, only court staff schedule hearings | `ProsecutionAndForensicTests`, `test_only_court_schedules_hearings` |
 | No automated decisions | No scoring, prediction, guilt or prosecution logic exists. Every status change is a human action, attributed and audited | — |
 
+## 1a. Documents (medical reports, police files, court papers)
+
+| Rule | Enforcement | Test |
+|---|---|---|
+| The uploading institution owns the file. A file uploaded **on a referral** is shared with the other party of that referral only (e.g. hospital ↔ police, police ↔ ODPP) | `documents/services.py::upload` | `test_medical_report_on_referral_reaches_police_only`, `test_police_file_to_odpp_on_prosecution_referral` |
+| Other institutions on the same case **cannot** see it unless it is explicitly forwarded. Forwarding is only possible to institutions involved in the case, only if the uploader allowed onward sharing, and is security-audited | `share`, `share_targets` | `test_police_forward_medical_report_to_odpp`, `test_non_forwardable_document_cannot_be_forwarded_by_recipient` |
+| Case documents uploaded without a referral stay inside the uploading institution | `visible_documents` | `test_internal_case_document_stays_inside_institution` |
+| Complainants, caregivers, children and administrators can never list or download documents | `IsInstitutionalUser` | `test_beneficiaries_and_admin_never_access_documents` |
+| Files are checked by content (PDF, JPG, PNG, WEBP, .docx without macros; max 10 MB), stored Fernet-encrypted in the database, and served as downloads with `no-store`, `nosniff` and a sandbox CSP. Every download is audited | `detect_type`, `download` | `test_files_are_validated_by_content`, `test_stored_encrypted_and_downloads_are_safe_and_audited` |
+| The uploader can withdraw a file: its content is destroyed, and the record stays for the audit trail | `withdraw` | `test_withdraw_destroys_content_and_only_owner_can` |
+| Only the uploader sees who else holds a copy | `DocumentSerializer` | `test_only_owner_sees_sharing_list` |
+
+Not included in the prototype: antivirus scanning of uploads, and per-document retention periods. Add both before real use.
+
 ## 2. Beneficiary & caregiver safeguards
 
 * **No automatic family access.** A `BeneficiaryAccessGrant` is per case and per person. It needs a written best-interests basis, explicit confirmation that the person is not implicated, and **approval by a second officer**. It can expire and be revoked. Access to one case never extends to another case of the same child.

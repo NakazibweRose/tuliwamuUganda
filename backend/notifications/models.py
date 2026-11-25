@@ -29,6 +29,7 @@ class NotificationType(models.TextChoices):
     NEW_COMPLAINT = "NEW_COMPLAINT", "New report to verify"
     COMPLAINT_REPLY = "COMPLAINT_REPLY", "Complainant replied"
     COMPLAINT_OVERDUE = "COMPLAINT_OVERDUE", "Report waiting more than 24 hours"
+    DOCUMENT_SHARED = "DOCUMENT_SHARED", "Document shared with your institution"
 
 
 class Notification(TimeStampedModel):

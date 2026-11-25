@@ -7,6 +7,7 @@ import {
   Alert, Badge, Button, Card, CardHeader, Checkbox, Detail, EmptyState, ErrorState, Field, Icon, Input, Loading, Modal,
   PageHeader, PriorityBadge, Select, StatusBadge, Tabs, Textarea,
 } from '../../components/ui'
+import DocumentsPanel, { DOC_CATEGORIES, FilePicker, uploadDocument } from '../../components/Documents'
 import { useApi } from '../../hooks/useApi'
 import { useI18n } from '../../i18n'
 import { fmtDate, fmtDateTime, isoToLocalInput, localInputToIso } from '../../lib/format'
@@ -126,15 +127,22 @@ export function ReferralModal({ c, open, onClose, onDone }) {
   const { t } = useI18n()
   const opts = useApi(open ? '/referrals/options/' : null)
   const [error, setError] = useState(null)
-  const defaults = { category: c.referral_needs?.[0] || 'MEDICAL', priority: c.immediate_risk ? 'URGENT' : 'ROUTINE', shared_fields: ['age_range', 'preferred_language', 'incident_category'], visible_to_beneficiary: true }
+  const defaults = { attach_category: 'POLICE_FILE', category: c.referral_needs?.[0] || 'MEDICAL', priority: c.immediate_risk ? 'URGENT' : 'ROUTINE', shared_fields: ['age_range', 'preferred_language', 'incident_category'], visible_to_beneficiary: true }
   const { register, handleSubmit, watch, formState: { isSubmitting, errors } } = useForm({ defaultValues: defaults })
   const category = watch('category')
+  const [attachFile, setAttachFile] = useState(null)
   const receivers = opts.data?.receivers?.[category] || []
   const sensitive = ['protection_concerns', 'location_detail']
   const submit = async (v) => {
     setError(null)
     try {
-      const r = await api.post('/referrals/', { ...v, case_id: c.id })
+      const { attach_category: attachCategory, ...body } = v
+      const r = await api.post('/referrals/', { ...body, case_id: c.id })
+      if (attachFile) {
+        // Files sent with a referral are shared with the receiving institution only.
+        await uploadDocument({ file: attachFile, category: attachCategory, title: '', referralId: r.data.id })
+        setAttachFile(null)
+      }
       onDone(r.data); onClose()
     } catch (e) { setError(describeError(e, t)) }
   }
@@ -163,6 +171,14 @@ export function ReferralModal({ c, open, onClose, onDone }) {
               {Object.keys(opts.data.shareable_fields).filter((f) => c.sensitive || !sensitive.includes(f)).map((f) => (
                 <Checkbox key={f} value={f} label={t(`shareable.${f}`)} hint={sensitive.includes(f) ? t('referralNew.sensitiveField') : undefined} {...register('shared_fields')} />
               ))}
+            </div>
+          </fieldset>
+          <fieldset className="rounded-xl border border-line p-4">
+            <legend className="px-1 text-sm font-semibold text-ink">{t('docs.sendWithReferral')}</legend>
+            <p className="mb-3 text-xs text-muted">{t('docs.sendWithReferralHint')}</p>
+            <div className="grid gap-3 sm:grid-cols-[14rem_1fr]">
+              <Select aria-label={t('docs.type')} {...register('attach_category')}>{DOC_CATEGORIES.map((x) => <option key={x} value={x}>{t(`docCategory.${x}`)}</option>)}</Select>
+              <FilePicker id="referral-attach" file={attachFile} onChange={setAttachFile} />
             </div>
           </fieldset>
           <Checkbox label={t('referralNew.visibleToFamily')} hint={t('referralNew.visibleToFamilyHint')} {...register('visible_to_beneficiary')} />
@@ -443,6 +459,7 @@ export default function CaseDetail() {
     { id: 'referrals', label: t('caseDetail.tabs.referrals') },
     { id: 'appointments', label: t('caseDetail.tabs.appointments') },
     { id: 'followups', label: t('caseDetail.tabs.followUps') },
+    { id: 'documents', label: t('caseDetail.tabs.documents') },
     { id: 'family', label: t('caseDetail.tabs.family') },
   ]
   const close = () => { setModal(null); setEditAppt(null) }
@@ -535,6 +552,7 @@ export default function CaseDetail() {
       {tab === 'followups' && <Card>
         <CardHeader title={t('caseDetail.tabs.followUps')} action={<Button size="sm" icon="plus" onClick={() => setModal('followup')}>{t('followUps.new')}</Button>} />
         <FollowUpsPanel c={c} reloadKey={reloadKey} /></Card>}
+      {tab === 'documents' && <Card><CardHeader title={t('caseDetail.tabs.documents')} subtitle={t('docs.caseSubtitle')} /><div className="p-5"><DocumentsPanel caseId={c.id} /></div></Card>}
       {tab === 'family' && <Card><CardHeader title={t('caseDetail.tabs.family')} subtitle={t('grants.subtitle')} /><FamilyPanel c={c} reloadKey={reloadKey} onNewGrant={() => setModal('grant')} /></Card>}
 
       <StageModal c={c} open={modal === 'stage'} onClose={close} onDone={refreshAll} />

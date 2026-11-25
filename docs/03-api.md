@@ -68,6 +68,16 @@ A case or object outside your scope returns **404**. A role that may never perfo
 | `POST access-grants/{id}/approve/` · `revoke/` | Approval by a different officer; `revoke` needs `{reason}` |
 | `GET assistance-requests/`, `POST assistance-requests/{id}/respond/` | `{status: IN_PROGRESS\|RESOLVED\|CLOSED, response_message}` |
 
+## Documents (institutional roles only)
+
+| Method & path | Notes |
+|---|---|
+| `GET documents/?case=<id>` · `?referral=<id>` | Only documents your institution may see (owned, received on a referral, or forwarded to you) |
+| `POST documents/` (multipart) | `file`, `category`, `title?`, `forwardable` and either `referral_id` (shares with the other party) or `case_id` (stays in your institution) |
+| `GET documents/{id}/download/` | Decrypted file as an attachment; audited |
+| `GET documents/{id}/share-targets/` · `POST documents/{id}/share/` | Forward to an institution involved in the case (`institution_id`) |
+| `POST documents/{id}/withdraw/` | Owner only; `{reason}`; deletes the content |
+
 ## Beneficiary portal (caregiver / child roles)
 
 | Method & path | Returns |

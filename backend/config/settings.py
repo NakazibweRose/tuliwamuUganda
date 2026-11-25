@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "translations",
     "communications",
     "complaints",
+    "documents",
 ]
 
 MIDDLEWARE = [

@@ -55,6 +55,9 @@ EN = {
     "notif.FOLLOW_UP_DUE.title": "Follow-up assigned",
     "notif.FOLLOW_UP_DUE.body": "A follow-up task has been assigned to you in Tuliwamu.",
 
+    "notif.DOCUMENT_SHARED.title": "Document shared with you",
+    "notif.DOCUMENT_SHARED.body": "A document has been shared with your institution. Please log in to Tuliwamu to view it.",
+
     # ---- Complainant reports ----
     "notif.COMPLAINT_RECEIVED.title": "We have received your report",
     "notif.COMPLAINT_RECEIVED.body": "Thank you for telling us. A police officer will review your report and get back to you within 24 hours. Please keep checking Tuliwamu.",
